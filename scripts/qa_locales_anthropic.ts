@@ -17,6 +17,7 @@ interface AnthropicResponse {
   id: string;
   model: string;
   content: AnthropicTextBlock[];
+  stop_reason?: string;
   usage?: {
     input_tokens?: number;
     output_tokens?: number;
@@ -42,6 +43,48 @@ interface QaResult {
 const ROOT = process.cwd();
 const OUTPUT_PATH = resolve(ROOT, 'docs/qa/anthropic-ja-ko.json');
 const MODEL = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-5';
+const QA_OUTPUT_SCHEMA = {
+  type: 'object',
+  properties: {
+    locale: { type: 'string', enum: ['ja', 'ko'] },
+    verdict: { type: 'string', enum: ['pass', 'needs_changes'] },
+    summary: { type: 'string' },
+    issues: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          source: {
+            type: 'string',
+            enum: ['runtime', 'manifest', 'storeListing', 'privacyPolicy'],
+          },
+          key: {
+            type: 'string',
+            description: 'Runtime message key, or an empty string for other sources.',
+          },
+          severity: {
+            type: 'string',
+            enum: ['blocker', 'major', 'minor'],
+          },
+          current: { type: 'string' },
+          suggested: { type: 'string' },
+          reason: { type: 'string' },
+        },
+        required: [
+          'source',
+          'key',
+          'severity',
+          'current',
+          'suggested',
+          'reason',
+        ],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ['locale', 'verdict', 'summary', 'issues'],
+  additionalProperties: false,
+} as const;
 
 async function loadLocalEnvironment(): Promise<void> {
   try {
@@ -91,12 +134,6 @@ async function sourceBundle(locale: 'ja' | 'ko'): Promise<Record<string, unknown
   };
 }
 
-function extractJson(text: string): QaResult {
-  const fenced = /```(?:json)?\s*([\s\S]*?)```/i.exec(text)?.[1];
-  const candidate = fenced ?? text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
-  return JSON.parse(candidate) as QaResult;
-}
-
 async function reviewLocale(
   apiKey: string,
   locale: 'ja' | 'ko',
@@ -112,22 +149,28 @@ async function reviewLocale(
     },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: 6000,
-      temperature: 0,
+      max_tokens: 12000,
+      thinking: { type: 'disabled' },
+      output_config: {
+        format: {
+          type: 'json_schema',
+          schema: QA_OUTPUT_SCHEMA,
+        },
+      },
       system:
         `You are a senior native ${language} product localization reviewer. ` +
         'Review Chrome-extension UI, store listing, and privacy copy for grammar, naturalness, clarity, consistent terminology, and product-policy accuracy. ' +
+        'Use blocker only for dangerous or unusable copy. Use major only when copy materially changes meaning, misrepresents privacy or product capabilities, or prevents a user from completing a task. ' +
+        'Classify tone, word order, terminology refinement, and non-blocking ambiguity as minor. Do not report strings that need no change. ' +
         'Do not translate product names, API names, Provider, Chrome Built-in AI, Ollama, URLs, code, or {placeholder} tokens. ' +
         'Treat this as AI-assisted linguistic QA, not legal advice.',
       messages: [
         {
           role: 'user',
           content:
-            'Review the following public copy. Return only valid JSON with this exact shape: ' +
-            '{"locale":"ja|ko","verdict":"pass|needs_changes","summary":"string",' +
-            '"issues":[{"source":"runtime|manifest|storeListing|privacyPolicy","key":"optional runtime key",' +
-            '"severity":"blocker|major|minor","current":"exact text","suggested":"replacement text","reason":"brief reason"}]}. ' +
-            'Use pass only when there are no blocker or major issues. Minor stylistic suggestions may remain.\n\n' +
+            'Review the following public copy. Report at most 20 distinct, highest-priority issues. ' +
+            'Use an empty key for non-runtime sources. Use pass only when there are no blocker or major issues. ' +
+            'Minor stylistic suggestions may remain.\n\n' +
             JSON.stringify(bundle),
         },
       ],
@@ -143,10 +186,15 @@ async function reviewLocale(
     .filter((block) => block.type === 'text')
     .map((block) => block.text)
     .join('\n');
+  if (!text) {
+    throw new Error(
+      `Anthropic returned no text for ${locale}; stop_reason=${data.stop_reason ?? 'unknown'}.`,
+    );
+  }
   return {
     responseId: data.id,
     model: data.model,
-    result: extractJson(text),
+    result: JSON.parse(text) as QaResult,
     usage: data.usage,
   };
 }

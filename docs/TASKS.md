@@ -68,5 +68,5 @@
 - [x] Public privacy policy and localized Chrome Web Store listing copy
 - [x] Store icon, promo tiles, and two real UI screenshots per locale
 - [x] Type-aware ESLint and loaded-extension Playwright tests in CI
-- [ ] Anthropic-assisted Japanese/Korean language QA (requires local API credential)
+- [x] Anthropic-assisted Japanese/Korean language QA (0 blocker/major issues)
 - [ ] External manual smoke and Chrome Web Store Developer Dashboard submission

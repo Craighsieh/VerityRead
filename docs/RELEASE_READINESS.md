@@ -6,9 +6,9 @@ Last reviewed: 2026-07-26
 
 **Code and store-package automation: PASS. External publication: HOLD.**
 
-The build may become the 0.1.0 release candidate after the external gates below
-are completed. It must not yet be described as published or fully approved by
-the Chrome Web Store.
+This is the 0.1.0 release candidate. It must not yet be described as published
+or fully approved by the Chrome Web Store until the external gates below are
+completed.
 
 ## Automated evidence
 
@@ -29,6 +29,12 @@ the Chrome Web Store.
   - A page cannot be read or leaked without a user grant
 - Five locales each define all 185 runtime UI strings explicitly
 - Five manifest locales are present in the production bundle
+- Anthropic-assisted Japanese/Korean language QA completed with Claude Sonnet 5
+  - 0 blocker or major issues remain
+  - Non-blocking stylistic suggestions are recorded in
+    `docs/qa/anthropic-ja-ko.json`
+  - Only public UI, listing, and privacy copy was reviewed; no page content or
+    user data was submitted
 - Ten real UI store screenshots are 1280×800
 - Store icon and promo tiles match Chrome Web Store dimensions
 - Privacy policy, dashboard answers, permission justifications, and localized
@@ -36,9 +42,6 @@ the Chrome Web Store.
 
 ## External gates still required
 
-- [ ] Run `pnpm qa:locales` with a locally supplied Anthropic API key; review and
-  resolve every Japanese/Korean blocker or major issue. This is AI-assisted
-  language QA, not native-speaker or legal certification.
 - [ ] In Chrome Stable, click the real toolbar action and confirm dynamic
   `activeTab` extraction, summarize, ask, source jump, selection translation,
   and Stop using a normal article.
@@ -58,6 +61,8 @@ the Chrome Web Store.
 
 - Production extension directory: `dist/`
 - Upload ZIP: `release/verityread-0.1.0.zip`
+- Upload ZIP SHA-256:
+  `68f4ea83ccfd980026d0ae2f4c2aee630525704bf91fee9d219b8e697c28d3b6`
 - Store assets: `assets/store/`
 - Store listing source: `docs/store/LISTING.md`
 - Privacy-practices source: `docs/store/PRIVACY_PRACTICES.md`
