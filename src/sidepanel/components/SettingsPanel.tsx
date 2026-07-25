@@ -3,7 +3,6 @@ import { isAppError, createAppError } from '@/shared/errors';
 import { OllamaProvider } from '@/providers/ollama';
 import {
   getOllamaModelDescriptors,
-  modelChoiceLabel,
   recommendOllamaModel,
 } from '@/providers/modelRecommendation';
 import type {
@@ -14,6 +13,8 @@ import type {
 } from '@/shared/types';
 import { ErrorBox } from './ErrorBox';
 import { getOllamaModels, OllamaStatusCard } from './OllamaStatusCard';
+import { SiteAccessCard } from './SiteAccessCard';
+import { t } from '@/i18n';
 
 interface Props {
   preferences: UserPreferences;
@@ -27,12 +28,11 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
 
   const checkOllama = async (
     model = preferences.ollamaModel,
-    baseUrl = preferences.ollamaBaseUrl,
   ) => {
     setCheckingOllama(true);
     setConnectionError(null);
     try {
-      const provider = new OllamaProvider({ baseUrl, model });
+      const provider = new OllamaProvider({ model });
       setOllamaStatus(await provider.healthCheck());
     } catch (err) {
       setOllamaStatus(null);
@@ -74,10 +74,11 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
 
   return (
     <div className="stack">
+      <SiteAccessCard />
       <div className="card stack">
-        <h2>Settings</h2>
+        <h2>{t('settings')}</h2>
         <label>
-          Default Provider
+          {t('defaultProvider')}
           <select
             value={preferences.defaultProviderId}
             onChange={(e) => void updateProvider(e.target.value as ProviderId)}
@@ -89,22 +90,22 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
         {preferences.defaultProviderId === 'ollama' && (
           <div className="stack">
             <label>
-              Ollama model
+              {t('ollamaModel')}
               {models.length > 0 ? (
                 <select
                   value={preferences.ollamaModel}
                   onChange={(e) => void updateModel(e.target.value)}
                 >
-                  <option value="">Choose an installed model</option>
+                  <option value="">{t('chooseInstalledModel')}</option>
                   {preferences.ollamaModel &&
                     !models.includes(preferences.ollamaModel) && (
                       <option value={preferences.ollamaModel}>
-                        {preferences.ollamaModel} (not installed)
+                        {preferences.ollamaModel} ({t('notInstalled')})
                       </option>
                     )}
                   {modelDescriptors.map((model) => (
                     <option key={model.name} value={model.name}>
-                      {modelChoiceLabel(model, recommendation)}
+                      {model.name}
                     </option>
                   ))}
                 </select>
@@ -119,8 +120,10 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
             {recommendation && (
               <div className="model-recommendation">
                 <div>
-                  <strong>Recommended: {recommendation.model.name}</strong>
-                  <span className="muted">{recommendation.reason}</span>
+                  <strong>
+                    {t('recommended', { model: recommendation.model.name })}
+                  </strong>
+                  <span className="muted">{t('modelRecommendationReason')}</span>
                 </div>
                 {preferences.ollamaModel !== recommendation.model.name && (
                   <button
@@ -128,21 +131,17 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
                     className="btn"
                     onClick={() => void updateModel(recommendation.model.name)}
                   >
-                    Use recommended
+                    {t('useRecommended')}
                   </button>
                 )}
               </div>
             )}
-            <label>
-              Ollama base URL (loopback only)
-              <input
-                value={preferences.ollamaBaseUrl}
-                onChange={(e) => {
-                  setOllamaStatus(null);
-                  void onUpdate({ ollamaBaseUrl: e.target.value });
-                }}
-              />
-            </label>
+            <div>
+              {t('ollamaEndpoint')}: <code>http://127.0.0.1:11434</code>
+            </div>
+            <p className="muted">
+              {t('customEndpointDeferred')}
+            </p>
             <div className="row">
               <button
                 type="button"
@@ -150,10 +149,10 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
                 disabled={checkingOllama}
                 onClick={() => void checkOllama()}
               >
-                {checkingOllama ? 'Testing…' : 'Test Ollama connection'}
+                {checkingOllama ? t('testing') : t('testOllama')}
               </button>
               <span className="muted">
-                Checks <code>/api/tags</code>; sends no page content.
+                {t('healthCheckNoContent')}
               </span>
             </div>
             {connectionError && <ErrorBox error={connectionError} />}
@@ -166,7 +165,7 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
             checked={preferences.cacheSummaries}
             onChange={(e) => void onUpdate({ cacheSummaries: e.target.checked })}
           />
-          Cache summaries locally
+          {t('cacheSummaries')}
         </label>
         <label className="row">
           <input
@@ -174,10 +173,10 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
             checked={preferences.historyEnabled}
             onChange={(e) => void onUpdate({ historyEnabled: e.target.checked })}
           />
-          Enable local history (off by default)
+          {t('enableHistory')}
         </label>
         <p className="muted">
-          Current Provider is always visible in the header. No silent fallback.
+          {t('noSilentFallback')}
         </p>
       </div>
     </div>

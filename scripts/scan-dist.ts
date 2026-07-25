@@ -8,15 +8,20 @@ import { join, relative } from 'node:path';
 
 const DIST = new URL('../dist', import.meta.url).pathname;
 
-const ALLOWED_ENDPOINT_PATTERNS = [
+const ALLOWED_PROGRAMMATIC_ENDPOINT_PATTERNS = [
   /chrome-extension:/,
   /127\.0\.0\.1/,
-  /localhost/,
   /chrome\.google\.com\/webstore/,
   /chromewebstore\.google\.com/,
   // React production error decoder URLs embedded by the bundler (not fetched by us)
   /react\.dev\/errors/,
 ];
+
+// Exact user-visible links opened only after a click. These are not fetch/XHR
+// destinations and must remain separate from the programmatic endpoint list.
+const ALLOWED_NAVIGATION_URLS = new Set([
+  'https://craighsieh.github.io/VerityRead/privacy/',
+]);
 
 const FORBIDDEN_PATTERNS: Array<{ name: string; re: RegExp }> = [
   { name: 'eval(', re: /\beval\s*\(/ },
@@ -86,7 +91,9 @@ async function main(): Promise<void> {
 
     for (const url of findUrls(content)) {
       if (isMatchPatternNoise(url) || isSchemaOrDocsNoise(url)) continue;
-      const allowed = ALLOWED_ENDPOINT_PATTERNS.some((p) => p.test(url));
+      const allowed =
+        ALLOWED_NAVIGATION_URLS.has(url) ||
+        ALLOWED_PROGRAMMATIC_ENDPOINT_PATTERNS.some((pattern) => pattern.test(url));
       if (!allowed) {
         findings.push(`${rel}: non-allowlisted endpoint ${url}`);
       }

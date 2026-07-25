@@ -1,0 +1,7 @@
+{
+  "extensionName": { "message": "VerityRead" },
+  "extensionDescription": {
+    "message": "正確な要約、ページへの質問、翻訳に対応した、プライバシー重視のローカルAI読書アシスタント。"
+  },
+  "actionTitle": { "message": "VerityReadを開く" }
+}

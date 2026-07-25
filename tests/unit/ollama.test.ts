@@ -80,6 +80,11 @@ describe('OllamaProvider', () => {
     expect(() => new OllamaProvider({ baseUrl: 'http://192.168.1.5:11434' })).toThrow();
   });
 
+  it('rejects alternate loopback hosts and ports in version 0.1.0', () => {
+    expect(() => new OllamaProvider({ baseUrl: 'http://localhost:11434' })).toThrow();
+    expect(() => new OllamaProvider({ baseUrl: 'http://127.0.0.1:8080' })).toThrow();
+  });
+
   it('reports a configured model that is not installed', async () => {
     const provider = new OllamaProvider({ model: 'missing:latest' });
     const status = await provider.healthCheck();

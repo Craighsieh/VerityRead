@@ -1,31 +1,33 @@
 import type { PrivacyReceipt } from '@/shared/types';
+import { t } from '@/i18n';
 
 export function PrivacyReceiptView({ receipt }: { receipt: PrivacyReceipt }) {
   return (
-    <div className="card receipt" aria-label="Privacy receipt">
-      <h3>Privacy receipt</h3>
+    <div className="card receipt" aria-label={t('privacyReceipt')}>
+      <h3>{t('privacyReceipt')}</h3>
       <div className="stack">
         <div>
-          Provider: <code>{receipt.providerId}</code> / <code>{receipt.model}</code>
+          {t('receiptProvider')}: <code>{receipt.providerId}</code> /{' '}
+          <code>{receipt.model}</code>
         </div>
         <div>
-          Inference: <code>{receipt.inferenceLocation}</code>
+          {t('receiptInference')}: <code>{receipt.inferenceLocation}</code>
         </div>
         <div>
-          Content source: <code>{receipt.contentSource}</code>
+          {t('receiptContentSource')}: <code>{receipt.contentSource}</code>
         </div>
         <div>
-          Saved input/output:{' '}
+          {t('receiptSaved')}:{' '}
           <code>
             {String(receipt.savedInput)}/{String(receipt.savedOutput)}
           </code>
         </div>
         <div>
-          Page content sent to cloud inference:{' '}
+          {t('receiptCloud')}:{' '}
           <strong style={{ color: 'var(--success)' }}>false</strong>
         </div>
         <div>
-          Allowed destinations:
+          {t('receiptDestinations')}:
           <ul>
             {receipt.allowedDestinations.map((d) => (
               <li key={d}>{d}</li>

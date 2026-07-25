@@ -15,10 +15,12 @@ import { isAppError } from '@/shared/errors';
 import type {
   ChromeLanguageModelSession,
   ChromeLanguageModelStatic,
+  ChromeLanguageDetectorStatic,
   ChromeSummarizerStatic,
   ChromeTranslatorStatic,
   LocalAIProvider,
 } from './types';
+import { t } from '@/i18n';
 
 function normalizeAvailability(value: unknown): Availability {
   if (
@@ -48,6 +50,55 @@ function getSummarizerApi(): ChromeSummarizerStatic | undefined {
 function getTranslatorApi(): ChromeTranslatorStatic | undefined {
   if (typeof window === 'undefined') return undefined;
   return window.Translator ?? window.ai?.translator;
+}
+
+function getLanguageDetectorApi(): ChromeLanguageDetectorStatic | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return window.LanguageDetector ?? window.ai?.languageDetector;
+}
+
+function translatorLanguageCode(language: string): string {
+  const normalized = language.trim();
+  const lower = normalized.toLowerCase();
+  if (lower === 'zh-hant' || lower === 'zh-tw' || lower === 'zh-hk') return 'zh-Hant';
+  if (lower === 'zh-hans' || lower === 'zh-cn' || lower === 'zh-sg') return 'zh';
+  return lower.split('-')[0] ?? normalized;
+}
+
+async function detectWithChromeI18n(text: string): Promise<string | undefined> {
+  if (typeof chrome === 'undefined' || !chrome.i18n?.detectLanguage) return undefined;
+  try {
+    const result = await chrome.i18n.detectLanguage(text);
+    const best = result.languages
+      .filter((language) => language.language !== 'und')
+      .sort((a, b) => b.percentage - a.percentage)[0];
+    return best && best.percentage >= 20 ? best.language : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function detectSourceLanguage(text: string): Promise<string | undefined> {
+  const detectorApi = getLanguageDetectorApi();
+  if (detectorApi) {
+    let detector: Awaited<ReturnType<ChromeLanguageDetectorStatic['create']>> | null =
+      null;
+    try {
+      const availability = normalizeAvailability(await detectorApi.availability());
+      if (availability !== 'unavailable') {
+        detector = await detectorApi.create();
+        const [best] = await detector.detect(text);
+        if (best && best.confidence >= 0.2 && best.detectedLanguage !== 'und') {
+          return best.detectedLanguage;
+        }
+      }
+    } catch {
+      // Fall back to the extension i18n detector below.
+    } finally {
+      detector?.destroy();
+    }
+  }
+  return detectWithChromeI18n(text);
 }
 
 export async function probeChromeAvailability(): Promise<{
@@ -105,7 +156,7 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
       model: 'Gemini Nano (Built-in)',
       message:
         best === 'unavailable'
-          ? 'Chrome Built-in AI is not available on this device/channel.'
+          ? createAppError('MODEL_UNAVAILABLE').message
           : undefined,
       details: avail,
     };
@@ -174,7 +225,7 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
     yield {
       type: 'progress',
       taskId,
-      stage: 'Loading the Chrome on-device model…',
+      stage: t('loadingChromeModel'),
       percent: 50,
     };
 
@@ -196,7 +247,7 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
       yield {
         type: 'progress',
         taskId,
-        stage: 'Chrome on-device model ready; generating…',
+        stage: t('chromeModelReady'),
         percent: 65,
       };
 
@@ -209,7 +260,7 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
               type: 'error',
               taskId,
               code: 'TASK_CANCELLED',
-              message: 'Task cancelled',
+              message: createAppError('TASK_CANCELLED').message,
             };
             return;
           }
@@ -255,7 +306,7 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
     } as const;
 
     const systemPrompt = [
-      'You are VaultLens, a privacy-first page assistant.',
+      'You are VerityRead, a privacy-first page assistant.',
       'Summarize ONLY from the provided page content.',
       'Do not add external knowledge. If content is insufficient, say so.',
       mode === 'quick'
@@ -283,7 +334,7 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
       yield {
         type: 'progress',
         taskId,
-        stage: 'Loading the Chrome on-device summarizer…',
+        stage: t('loadingChromeSummarizer'),
         percent: 50,
       };
       try {
@@ -303,7 +354,7 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
           yield {
             type: 'progress',
             taskId,
-            stage: 'Chrome summarizer ready; generating…',
+            stage: t('chromeSummarizerReady'),
             percent: 65,
           };
           let full = '';
@@ -337,40 +388,13 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
   }
 
   async translate(request: TranslateRequest): Promise<TranslateResult> {
-    const api = getTranslatorApi();
-    const sourceLanguage = request.sourceLanguage ?? 'en';
-    const targetLanguage = request.targetLanguage;
+    const dedicated = await this.translateWithTranslator(request);
+    if (dedicated) return dedicated;
 
-    if (api) {
-      try {
-        const availability = normalizeAvailability(
-          await api.availability({ sourceLanguage, targetLanguage }),
-        );
-        if (availability !== 'unavailable') {
-          const controller = new AbortController();
-          this.abortControllers.set(request.taskId, controller);
-          const session = await api.create({
-            sourceLanguage,
-            targetLanguage,
-            signal: controller.signal,
-          });
-          const translatedText = await session.translate(request.text);
-          session.destroy();
-          this.abortControllers.delete(request.taskId);
-          return {
-            taskId: request.taskId,
-            translatedText,
-            detectedLanguage: sourceLanguage,
-            targetLanguage,
-            engine: 'chrome-translator',
-            providerId: this.id,
-            model: 'Chrome Translator',
-          };
-        }
-      } catch {
-        // LLM fallback below
-      }
-    }
+    const sourceLanguage = request.sourceLanguage
+      ? translatorLanguageCode(request.sourceLanguage)
+      : undefined;
+    const targetLanguage = translatorLanguageCode(request.targetLanguage);
 
     // LLM fallback
     let full = '';
@@ -391,11 +415,73 @@ export class ChromeBuiltinAIProvider implements LocalAIProvider {
       taskId: request.taskId,
       translatedText: full,
       detectedLanguage: sourceLanguage,
-      targetLanguage,
+      targetLanguage: request.targetLanguage,
       engine: 'llm-fallback',
       providerId: this.id,
       model: 'Gemini Nano (Built-in)',
     };
+  }
+
+  /**
+   * Uses Chrome's task-specific, on-device Translator before any provider LLM.
+   * Returns null when the language pair cannot be detected or is unavailable.
+   */
+  async translateWithTranslator(
+    request: TranslateRequest,
+  ): Promise<TranslateResult | null> {
+    const api = getTranslatorApi();
+    if (!api) return null;
+
+    const detectedLanguage =
+      request.sourceLanguage ?? (await detectSourceLanguage(request.text));
+    if (!detectedLanguage) return null;
+
+    const sourceLanguage = translatorLanguageCode(detectedLanguage);
+    const targetLanguage = translatorLanguageCode(request.targetLanguage);
+    if (sourceLanguage === targetLanguage) {
+      return {
+        taskId: request.taskId,
+        translatedText: request.text,
+        detectedLanguage,
+        targetLanguage: request.targetLanguage,
+        engine: 'identity',
+        providerId: this.id,
+        model: 'No translation needed',
+      };
+    }
+
+    let session: Awaited<ReturnType<ChromeTranslatorStatic['create']>> | null = null;
+    try {
+      const availability = normalizeAvailability(
+        await api.availability({ sourceLanguage, targetLanguage }),
+      );
+      if (availability === 'unavailable') return null;
+
+      const controller = new AbortController();
+      this.abortControllers.set(request.taskId, controller);
+      session = await api.create({
+        sourceLanguage,
+        targetLanguage,
+        signal: controller.signal,
+      });
+      return {
+        taskId: request.taskId,
+        translatedText: await session.translate(request.text),
+        detectedLanguage,
+        targetLanguage: request.targetLanguage,
+        engine: 'chrome-translator',
+        providerId: this.id,
+        model: 'Chrome Translator',
+      };
+    } catch {
+      return null;
+    } finally {
+      try {
+        session?.destroy();
+      } finally {
+        this.abortControllers.delete(request.taskId);
+      }
+    }
   }
 
   async cancel(taskId: string): Promise<void> {

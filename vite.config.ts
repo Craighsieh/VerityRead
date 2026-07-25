@@ -12,7 +12,9 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: true,
+    // Store builds do not ship source maps; source is available in the public
+    // repository and development mode still provides Vite debugging.
+    sourcemap: false,
     target: 'es2022',
   },
   server: {

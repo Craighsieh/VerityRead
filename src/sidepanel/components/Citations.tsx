@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { SourceCitation } from '@/shared/types';
 import { sendMessage } from '@/shared/messaging';
+import { t } from '@/i18n';
 
 export function Citations({ citations }: { citations: SourceCitation[] }) {
   const [jumpError, setJumpError] = useState('');
@@ -17,15 +18,15 @@ export function Citations({ citations }: { citations: SourceCitation[] }) {
       setJumpError(
         result?.type === 'JUMP_TO_SOURCE_RESULT' && result.error
           ? result.error.message
-          : 'Could not jump to this source on the current page.',
+          : t('jumpFailed'),
       );
     }
   };
 
   return (
     <details className="source-details">
-      <summary>Sources ({citations.length})</summary>
-      <div className="source-list" aria-label="Source citations">
+      <summary>{t('sources', { count: citations.length })}</summary>
+      <div className="source-list" aria-label={t('sourceCitations')}>
         {citations.map((c) => (
           <button
             key={c.sourceBlockId}

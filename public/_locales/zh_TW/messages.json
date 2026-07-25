@@ -1,0 +1,7 @@
+{
+  "extensionName": { "message": "真閱" },
+  "extensionDescription": {
+    "message": "本地 AI 閱讀助理，提供精準摘要、頁面問答與翻譯，隱私無憂。"
+  },
+  "actionTitle": { "message": "開啟真閱" }
+}

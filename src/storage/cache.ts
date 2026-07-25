@@ -5,7 +5,7 @@ import type {
   SummarizeMode,
 } from '@/shared/types';
 
-const DB_NAME = 'vaultlens';
+const DB_NAME = 'verityread';
 const DB_VERSION = 1;
 const STORE_SUMMARY = 'summaryCache';
 const STORE_HISTORY = 'history';

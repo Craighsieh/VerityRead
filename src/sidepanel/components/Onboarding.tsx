@@ -3,7 +3,6 @@ import { probeChromeAvailability } from '@/providers/chromeBuiltin';
 import { OllamaProvider } from '@/providers/ollama';
 import {
   getOllamaModelDescriptors,
-  modelChoiceLabel,
   recommendOllamaModel,
 } from '@/providers/modelRecommendation';
 import type {
@@ -12,9 +11,11 @@ import type {
   ProviderStatus,
   UserPreferences,
 } from '@/shared/types';
+import { CURRENT_PRIVACY_CONSENT_VERSION } from '@/shared/types';
 import { ErrorBox } from './ErrorBox';
 import { createAppError } from '@/shared/errors';
 import { getOllamaModels, OllamaStatusCard } from './OllamaStatusCard';
+import { t, type MessageKey } from '@/i18n';
 
 interface Props {
   preferences: UserPreferences;
@@ -25,10 +26,11 @@ type Step = 'privacy' | 'capabilities' | 'provider' | 'done';
 
 function AvailabilityBadge({ value }: { value: Availability }) {
   const cls = value === 'available' ? 'ok' : value === 'unavailable' ? 'bad' : 'warn';
+  const labelKey = (value === 'unavailable' ? 'unavailable' : value) as MessageKey;
   return (
     <span className="row">
       <span className={`status-dot ${cls}`} />
-      <span className="badge">{value}</span>
+      <span className="badge">{t(labelKey)}</span>
     </span>
   );
 }
@@ -46,6 +48,7 @@ export function Onboarding({ preferences, onComplete }: Props) {
   const [ollamaModel, setOllamaModel] = useState(preferences.ollamaModel);
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState<ReturnType<typeof createAppError> | null>(null);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
 
   const runCapabilityCheck = async () => {
     setChecking(true);
@@ -81,9 +84,23 @@ export function Onboarding({ preferences, onComplete }: Props) {
   }, [step]);
 
   const finish = async () => {
+    const selectedOllamaModel = ollamaModel || ollamaStatus?.model || '';
+    const providerReady =
+      providerId === 'chrome-builtin'
+        ? chromeAvail?.languageModel === 'available'
+        : Boolean(ollamaStatus?.healthy && selectedOllamaModel);
+    if (!providerReady) {
+      setError(
+        createAppError('MODEL_UNAVAILABLE', {
+          message: t('setupNeedsReady'),
+        }),
+      );
+      return;
+    }
     await onComplete({
       defaultProviderId: providerId,
-      ollamaModel,
+      ollamaModel: selectedOllamaModel,
+      privacyConsentVersion: CURRENT_PRIVACY_CONSENT_VERSION,
       onboardingComplete: true,
     });
     setStep('done');
@@ -91,49 +108,58 @@ export function Onboarding({ preferences, onComplete }: Props) {
   const ollamaModels = getOllamaModels(ollamaStatus);
   const modelDescriptors = getOllamaModelDescriptors(ollamaStatus);
   const recommendation = recommendOllamaModel(modelDescriptors);
+  const selectedOllamaModel = ollamaModel || ollamaStatus?.model || '';
+  const providerReady =
+    providerId === 'chrome-builtin'
+      ? chromeAvail?.languageModel === 'available'
+      : Boolean(ollamaStatus?.healthy && selectedOllamaModel);
 
   return (
     <div className="stack">
       <div className="card">
-        <h2>Welcome to VaultLens</h2>
-        <p className="muted">
-          Privacy-first local AI assistant. Page content is never sent to cloud inference
-          by default.
-        </p>
+        <h2>{t('welcomeTitle')}</h2>
+        <p className="muted">{t('welcomeBody')}</p>
       </div>
 
       {step === 'privacy' && (
         <div className="card stack">
-          <h3>Privacy promise (verifiable)</h3>
+          <h3>{t('privacyPromise')}</h3>
           <ul>
-            <li>
-              Page content, selections, prompts, and AI replies are not sent to cloud
-              inference services by default.
-            </li>
-            <li>
-              Model downloads, extension updates, and license checks may use the network —
-              fully isolated from page data.
-            </li>
-            <li>We only read the current tab after you click a feature.</li>
+            <li>{t('privacyPromiseOne')}</li>
+            <li>{t('privacyPromiseTwo')}</li>
+            <li>{t('privacyPromiseThree')}</li>
           </ul>
+          <label className="row">
+            <input
+              type="checkbox"
+              checked={privacyConsent}
+              onChange={(event) => setPrivacyConsent(event.target.checked)}
+            />
+            <span>{t('privacyConsent')}</span>
+          </label>
+          <a
+            href="https://craighsieh.github.io/VerityRead/privacy/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t('privacyPolicy')}
+          </a>
           <button
             type="button"
             className="btn primary"
+            disabled={!privacyConsent}
             onClick={() => setStep('capabilities')}
           >
-            Run device capability check
+            {t('runCapabilityCheck')}
           </button>
         </div>
       )}
 
       {step === 'capabilities' && (
         <div className="card stack">
-          <h3>Device capability check</h3>
-          <p className="muted">
-            Does not read the current page. Preliminary results appear quickly; download
-            states may update later.
-          </p>
-          {checking && <p>Checking…</p>}
+          <h3>{t('deviceCapabilityCheck')}</h3>
+          <p className="muted">{t('capabilityCheckBody')}</p>
+          {checking && <p>{t('checking')}…</p>}
           {chromeAvail && (
             <div className="stack">
               <div className="row">
@@ -148,7 +174,7 @@ export function Onboarding({ preferences, onComplete }: Props) {
               <div className="row">
                 WebGPU{' '}
                 <span className="badge">
-                  {chromeAvail.webgpu ? 'present (MVP: display only)' : 'missing'}
+                  {chromeAvail.webgpu ? t('presentDisplayOnly') : t('missing')}
                 </span>
               </div>
             </div>
@@ -161,14 +187,14 @@ export function Onboarding({ preferences, onComplete }: Props) {
               className="btn"
               onClick={() => void runCapabilityCheck()}
             >
-              Re-check
+              {t('recheck')}
             </button>
             <button
               type="button"
               className="btn primary"
               onClick={() => setStep('provider')}
             >
-              Choose Provider
+              {t('chooseProvider')}
             </button>
           </div>
         </div>
@@ -176,11 +202,8 @@ export function Onboarding({ preferences, onComplete }: Props) {
 
       {step === 'provider' && (
         <div className="card stack">
-          <h3>Choose default Provider</h3>
-          <p className="muted">
-            UI always shows the active Provider. VaultLens never switches without your
-            action.
-          </p>
+          <h3>{t('chooseDefaultProvider')}</h3>
+          <p className="muted">{t('providerChoiceBody')}</p>
           <label className="row">
             <input
               type="radio"
@@ -203,19 +226,21 @@ export function Onboarding({ preferences, onComplete }: Props) {
           {providerId === 'ollama' && (
             <div className="stack">
               <label>
-                Model name
+                {t('modelName')}
                 {ollamaModels.length > 0 ? (
                   <select
                     value={ollamaModel}
                     onChange={(e) => setOllamaModel(e.target.value)}
                   >
-                    <option value="">Choose an installed model</option>
+                    <option value="">{t('chooseInstalledModel')}</option>
                     {ollamaModel && !ollamaModels.includes(ollamaModel) && (
-                      <option value={ollamaModel}>{ollamaModel} (not installed)</option>
+                      <option value={ollamaModel}>
+                        {ollamaModel} ({t('notInstalled')})
+                      </option>
                     )}
                     {modelDescriptors.map((model) => (
                       <option key={model.name} value={model.name}>
-                        {modelChoiceLabel(model, recommendation)}
+                        {model.name}
                       </option>
                     ))}
                   </select>
@@ -230,8 +255,10 @@ export function Onboarding({ preferences, onComplete }: Props) {
               {recommendation && (
                 <div className="model-recommendation">
                   <div>
-                    <strong>Recommended: {recommendation.model.name}</strong>
-                    <span className="muted">{recommendation.reason}</span>
+                    <strong>
+                      {t('recommended', { model: recommendation.model.name })}
+                    </strong>
+                    <span className="muted">{t('modelRecommendationReason')}</span>
                   </div>
                   {ollamaModel !== recommendation.model.name && (
                     <button
@@ -239,7 +266,7 @@ export function Onboarding({ preferences, onComplete }: Props) {
                       className="btn"
                       onClick={() => setOllamaModel(recommendation.model.name)}
                     >
-                      Use recommended
+                      {t('useRecommended')}
                     </button>
                   )}
                 </div>
@@ -249,7 +276,7 @@ export function Onboarding({ preferences, onComplete }: Props) {
                 className="btn"
                 onClick={() => void runCapabilityCheck()}
               >
-                Connection test
+                {t('connectionTest')}
               </button>
               <OllamaStatusCard status={ollamaStatus} checking={checking} />
             </div>
@@ -259,23 +286,30 @@ export function Onboarding({ preferences, onComplete }: Props) {
             chromeAvail?.languageModel === 'unavailable' && (
               <ErrorBox
                 error={createAppError('MODEL_UNAVAILABLE', {
-                  message:
-                    'Chrome Built-in AI is unavailable. Use Ollama or enable Gemini Nano / Built-in AI flags on a supported Chrome channel.',
+                  message: `${t('unavailable')}: Chrome Built-in AI`,
                 })}
               />
             )}
 
-          <button type="button" className="btn primary" onClick={() => void finish()}>
-            Finish setup
+          {!providerReady && (
+            <p className="muted" role="status">
+              {t('setupNeedsReady')}
+            </p>
+          )}
+          <button
+            type="button"
+            className="btn primary"
+            disabled={!providerReady || checking}
+            onClick={() => void finish()}
+          >
+            {t('finishSetup')}
           </button>
         </div>
       )}
 
       {step === 'done' && (
         <div className="card">
-          <p>
-            Setup complete. Open a normal webpage and try <strong>Summarize</strong>.
-          </p>
+          <p>{t('setupComplete')}</p>
         </div>
       )}
     </div>

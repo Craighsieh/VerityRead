@@ -13,6 +13,7 @@ import {
   type TranslateResult,
 } from '@/shared/types';
 import type { LocalAIProvider } from './types';
+import { t } from '@/i18n';
 
 export interface OllamaModelInfo {
   name: string;
@@ -49,13 +50,20 @@ function assertLoopbackUrl(baseUrl: string): string {
       cause: 'Invalid Ollama URL',
     });
   }
-  if (url.hostname !== '127.0.0.1' && url.hostname !== 'localhost') {
+  if (
+    url.origin !== OLLAMA_DEFAULT_URL ||
+    url.username ||
+    url.password ||
+    (url.pathname !== '/' && url.pathname !== '') ||
+    url.search ||
+    url.hash
+  ) {
     throw createAppError('OLLAMA_UNREACHABLE', {
-      cause: 'Only loopback Ollama endpoints are allowed in MVP',
-      message: 'Remote or LAN Ollama endpoints are blocked by default.',
+      cause: `Version 0.1.0 only allows ${OLLAMA_DEFAULT_URL}`,
+      message: `Custom Ollama endpoints are unavailable in this release. Use ${OLLAMA_DEFAULT_URL}.`,
     });
   }
-  return url.origin;
+  return OLLAMA_DEFAULT_URL;
 }
 
 function detectCorsError(err: unknown): boolean {
@@ -200,8 +208,8 @@ export class OllamaProvider implements LocalAIProvider {
           availability: 'unavailable',
           errorCode,
           message: detail
-            ? `Ollama returned HTTP ${res.status}: ${detail}`
-            : `Ollama returned HTTP ${res.status}`,
+            ? `${t('ollamaHttpError', { status: res.status })} ${detail}`
+            : t('ollamaHttpError', { status: res.status }),
         };
       }
       const data = (await res.json()) as { models?: OllamaModelInfo[] };
@@ -229,9 +237,9 @@ export class OllamaProvider implements LocalAIProvider {
         contextWindow,
         message:
           models.length === 0
-            ? 'Ollama is running but no models are installed. Run `ollama pull <model>`.'
+            ? t('ollamaNoModels')
             : !selectedInstalled
-              ? `The selected model "${configuredModel}" is not installed.`
+              ? t('ollamaModelNotInstalled', { model: configuredModel })
               : undefined,
         details: {
           models: models.map((m) => m.name),
@@ -289,7 +297,7 @@ export class OllamaProvider implements LocalAIProvider {
       yield {
         type: 'progress',
         taskId,
-        stage: `Connecting to Ollama and loading ${model}…`,
+        stage: t('loadingOllamaModel', { model }),
         percent: 50,
       };
       const system = [
@@ -308,7 +316,7 @@ export class OllamaProvider implements LocalAIProvider {
         body: JSON.stringify({
           model,
           stream: true,
-          // VaultLens renders final answer tokens only, so hidden reasoning would
+          // VerityRead renders final answer tokens only, so hidden reasoning would
           // delay visible output and can leave the UI looking indefinitely blank.
           think: false,
           keep_alive: '10m',
@@ -342,7 +350,7 @@ export class OllamaProvider implements LocalAIProvider {
       yield {
         type: 'progress',
         taskId,
-        stage: `Ollama loaded ${model}; waiting for the first token…`,
+        stage: t('ollamaFirstToken', { model }),
         percent: 65,
       };
       const reader = res.body.getReader();
@@ -381,7 +389,7 @@ export class OllamaProvider implements LocalAIProvider {
           type: 'error',
           taskId,
           code: 'TASK_CANCELLED',
-          message: 'Task cancelled',
+          message: createAppError('TASK_CANCELLED').message,
         };
         return;
       }
@@ -418,7 +426,7 @@ export class OllamaProvider implements LocalAIProvider {
     yield* this.generate({
       taskId: request.taskId,
       systemPrompt: [
-        'You are VaultLens. Summarize ONLY from the provided page content.',
+        'You are VerityRead. Summarize ONLY from the provided page content.',
         'Do not add external knowledge.',
         modeHint,
         readingLevelHint,

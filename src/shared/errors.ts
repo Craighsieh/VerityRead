@@ -1,4 +1,5 @@
 import type { AppError, ErrorCode } from './types';
+import { getLocalizedErrorCopy } from '@/i18n/errors';
 
 const ERROR_CATALOG: Record<
   ErrorCode,
@@ -6,7 +7,7 @@ const ERROR_CATALOG: Record<
 > = {
   PAGE_PROTECTED: {
     message: 'This page cannot be accessed by extensions.',
-    impact: 'VaultLens cannot read chrome://, Web Store, or browser settings pages.',
+    impact: 'VerityRead cannot read chrome://, Web Store, or browser settings pages.',
     nextSteps: [
       'Open a normal http(s) page such as an article or GitHub issue.',
       'Or select text and use Translate instead of full-page extract.',
@@ -16,8 +17,18 @@ const ERROR_CATALOG: Record<
     message: 'Unable to access the current tab content.',
     impact: 'Summary and Ask Page require a readable active tab.',
     nextSteps: [
-      'Click the VaultLens icon on the page first (grants activeTab).',
+      'Click the VerityRead icon on the page first (grants activeTab).',
       'Reload the page and try again.',
+    ],
+  },
+  PAGE_ACCESS_REQUIRED: {
+    message: 'This site has not granted page access.',
+    impact:
+      'VerityRead cannot read this tab until you grant one-time access or allow this exact site.',
+    nextSteps: [
+      'Click the VerityRead toolbar icon on this tab, then retry for one-time access.',
+      'Or open Settings and choose “Always allow this site”.',
+      'VerityRead never requests access to every website at install time.',
     ],
   },
   EXTRACT_QUALITY_LOW: {
@@ -30,7 +41,7 @@ const ERROR_CATALOG: Record<
   },
   CONTENT_TOO_LONG: {
     message: 'Page content exceeds the model context window.',
-    impact: 'VaultLens will chunk and map-reduce; quality may vary on very long pages.',
+    impact: 'VerityRead will chunk and map-reduce; quality may vary on very long pages.',
     nextSteps: [
       'Try Quick summary first.',
       'Ask a focused question about a specific section.',
@@ -77,7 +88,7 @@ const ERROR_CATALOG: Record<
     impact: 'The browser cannot call Ollama until origins are allowlisted.',
     nextSteps: [
       'Set OLLAMA_ORIGINS to include this extension origin (see Onboarding guide).',
-      'Prefer allowing only the VaultLens extension origin, not all extensions.',
+      'Prefer allowing only the VerityRead extension origin, not all extensions.',
       'Restart Ollama and retry the connection test.',
     ],
   },
@@ -96,7 +107,7 @@ const ERROR_CATALOG: Record<
   },
   RETRIEVAL_LOW_CONFIDENCE: {
     message: 'Not enough information found on the current page.',
-    impact: 'VaultLens will not invent an answer from model knowledge.',
+    impact: 'VerityRead will not invent an answer from model knowledge.',
     nextSteps: [
       'Rephrase the question using terms from the page.',
       'Select a relevant passage and ask again.',
@@ -114,12 +125,13 @@ export function createAppError(
   overrides?: Partial<Pick<AppError, 'message' | 'cause' | 'impact' | 'nextSteps'>>,
 ): AppError {
   const base = ERROR_CATALOG[code];
+  const localized = getLocalizedErrorCopy(code);
   return {
     code,
-    message: overrides?.message ?? base.message,
+    message: overrides?.message ?? localized.message,
     cause: overrides?.cause,
-    impact: overrides?.impact ?? base.impact,
-    nextSteps: overrides?.nextSteps ?? base.nextSteps,
+    impact: overrides?.impact ?? localized.impact ?? base.impact,
+    nextSteps: overrides?.nextSteps ?? localized.nextSteps ?? base.nextSteps,
   };
 }
 

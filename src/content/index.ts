@@ -2,8 +2,8 @@ import { createAppError, isAppError } from '@/shared/errors';
 import { createRequestId, isExtensionMessage } from '@/shared/messages';
 import { extractContextFromDocument } from '@/core/extract';
 
-const HIGHLIGHT_CLASS = 'vaultlens-source-highlight';
-const HIGHLIGHT_STYLE_ID = 'vaultlens-highlight-style';
+const HIGHLIGHT_CLASS = 'verityread-source-highlight';
+const HIGHLIGHT_STYLE_ID = 'verityread-highlight-style';
 
 function ensureHighlightStyle(): void {
   if (document.getElementById(HIGHLIGHT_STYLE_ID)) return;

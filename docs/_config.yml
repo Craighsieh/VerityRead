@@ -1,0 +1,6 @@
+title: VerityRead
+description: Local AI reading assistant. Accurate summaries. Privacy by design.
+theme: minima
+markdown: kramdown
+exclude:
+  - HANDOFF_CODEX.md

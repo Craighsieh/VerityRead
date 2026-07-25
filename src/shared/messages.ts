@@ -26,6 +26,10 @@ export type MessageType =
   | 'HIGHLIGHT_SELECTION'
   | 'GET_SELECTION'
   | 'GET_SELECTION_RESULT'
+  | 'GET_SITE_ACCESS'
+  | 'REQUEST_SITE_ACCESS'
+  | 'REMOVE_SITE_ACCESS'
+  | 'SITE_ACCESS_RESULT'
   | 'SUMMARIZE'
   | 'ASK_PAGE'
   | 'TRANSLATE'
@@ -96,6 +100,28 @@ export interface GetSelectionMessage extends BaseMessage {
 export interface GetSelectionResultMessage extends BaseMessage {
   type: 'GET_SELECTION_RESULT';
   text: string;
+}
+
+export interface GetSiteAccessMessage extends BaseMessage {
+  type: 'GET_SITE_ACCESS';
+}
+
+export interface RequestSiteAccessMessage extends BaseMessage {
+  type: 'REQUEST_SITE_ACCESS';
+}
+
+export interface RemoveSiteAccessMessage extends BaseMessage {
+  type: 'REMOVE_SITE_ACCESS';
+}
+
+export interface SiteAccessResultMessage extends BaseMessage {
+  type: 'SITE_ACCESS_RESULT';
+  origin?: string;
+  originPattern?: string;
+  hasPersistentAccess: boolean;
+  canRequest: boolean;
+  granted?: boolean;
+  error?: AppError;
 }
 
 export interface SummarizeMessage extends BaseMessage {
@@ -228,6 +254,10 @@ export type ExtensionMessage =
   | JumpToSourceResultMessage
   | GetSelectionMessage
   | GetSelectionResultMessage
+  | GetSiteAccessMessage
+  | RequestSiteAccessMessage
+  | RemoveSiteAccessMessage
+  | SiteAccessResultMessage
   | SummarizeMessage
   | AskPageMessage
   | TranslateMessage

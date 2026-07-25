@@ -1,0 +1,203 @@
+{
+  "generatedAt": "2026-07-25T22:05:42.253Z",
+  "requestedModel": "claude-sonnet-5",
+  "disclosure": "AI-assisted language QA only; no page content or user data was submitted.",
+  "reviews": [
+    {
+      "responseId": "msg_011CdPXvE4JLwNiidyEduwcR",
+      "model": "claude-sonnet-5",
+      "result": {
+        "locale": "ja",
+        "verdict": "needs_changes",
+        "summary": "全体的に自然で高品質な日本語ローカライズだが、いくつかの用語不統一・軽微な訳質・一部の意味的なニュアンスのずれが見られる。ブロッカーはないが、いくつかは意味の明確化のため修正が望ましい。",
+        "issues": [
+          {
+            "source": "runtime",
+            "key": "presentDisplayOnly",
+            "severity": "minor",
+            "current": "検出済み（現バージョンでは表示のみで、選択には利用できません）",
+            "suggested": "検出済み（現バージョンでは表示のみで、選択できません）",
+            "reason": "「利用できません」より「選択できません」のほうが簡潔で自然。意味は変わらないため軽微な文体の改善提案。"
+          },
+          {
+            "source": "runtime",
+            "key": "ollamaNoModels",
+            "severity": "minor",
+            "current": "Ollamaは実行中ですが、モデルがインストールされていません。ターミナルで`ollama pull <model>`を実行してください。",
+            "suggested": "Ollamaは実行中ですが、モデルがインストールされていません。ターミナルで「ollama pull <model>」を実行してください。",
+            "reason": "バッククォートはコード表記として保持してよいが、UI文中では全角括弧の方が日本語として読みやすい場合がある。ただしコード保持ポリシーに従い現状維持も可。優先度は低い。"
+          },
+          {
+            "source": "runtime",
+            "key": "pairingNote",
+            "severity": "minor",
+            "current": "ローカルモデルが生成する文構造が原文と異なるため、原文と翻訳を2つのブロックに分けて表示しています。",
+            "suggested": "ローカルモデルが生成する訳文の文構造が原文と異なるため、原文と翻訳を2つのブロックに分けて表示しています。",
+            "reason": "「文構造」が指すのが翻訳結果なのか原文なのか若干曖昧。「訳文の文構造」とすることで意味が明確になる。"
+          },
+          {
+            "source": "runtime",
+            "key": "corsSetup",
+            "severity": "minor",
+            "current": "CORS設定（{platform}）",
+            "suggested": "CORS設定（{platform}）",
+            "reason": "変更不要だが、他の設定関連文字列と用語（「設定」）が一貫しているか確認済み。問題なし。"
+          },
+          {
+            "source": "runtime",
+            "key": "receiptContentSource",
+            "severity": "minor",
+            "current": "内容の取得元",
+            "suggested": "内容の取得元",
+            "reason": "意味は明確だが、他の項目（Provider、推論場所）と並べた際に「取得元」がやや口語的。「コンテンツ取得元」等の統一も検討可。優先度低。"
+          },
+          {
+            "source": "storeListing",
+            "key": "",
+            "severity": "minor",
+            "current": "Chrome Built-in AI、またはご自身の端末の`127.0.0.1:11434`で動作するOllamaモデルのいずれかを選択できます。",
+            "suggested": "Chrome Built-in AI、またはご自身の端末の127.0.0.1:11434で動作するOllamaモデルのいずれかを選択できます。",
+            "reason": "Markdown内でバッククォートがそのまま表示される可能性があり、店舗リスティングの表示形式次第で見た目が崩れる可能性がある。技術文字列としての体裁確認が望ましい（軽微な表示上の懸念）。"
+          },
+          {
+            "source": "privacyPolicy",
+            "key": "",
+            "severity": "minor",
+            "current": "ユーザーが機能を選択した後に限り、現在のページの読み取り可能なテキスト、見出し、タイトル、URL、ドメイン、選択テキスト、入力した質問、端末内で生成した要約・翻訳・回答・出典を一時的に処理します。",
+            "suggested": "ユーザーが機能を選択した後にのみ、現在のページの読み取り可能なテキスト、見出し、タイトル、URL、ドメイン、選択テキスト、入力した質問、および端末内で生成した要約・翻訳・回答・出典を一時的に処理します。",
+            "reason": "「後に限り」より「後にのみ」の方が自然で、他の文言（例：privacyPromiseThree「操作を選択した後にのみ」）と表現が統一される。用語の一貫性向上のための軽微な提案。"
+          },
+          {
+            "source": "runtime",
+            "key": "privacyPromiseThree",
+            "severity": "minor",
+            "current": "操作を選択した後にのみ、現在のタブの内容を読み取ります。",
+            "suggested": "操作を選択した後にのみ、現在のタブの内容を読み取ります。",
+            "reason": "この文言自体は自然。プライバシーポリシー側の「後に限り」をこちらの表現「後にのみ」に統一することを推奨（参照用）。"
+          },
+          {
+            "source": "runtime",
+            "key": "corsMacSteps",
+            "severity": "minor",
+            "current": "Ollamaを終了し、ターミナルで以下のコマンドを実行してから、Ollamaを再起動してください。",
+            "suggested": "Ollamaを終了し、ターミナルで以下のコマンドを実行した後、Ollamaを再起動してください。",
+            "reason": "「実行してから」でも問題ないが、手順の順序性をより明確にするため「実行した後」という表現も自然な代替案。優先度は非常に低い。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 7278,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1755,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      }
+    },
+    {
+      "responseId": "msg_011CdPXwsYKuWoNvQ2i9VAgs",
+      "model": "claude-sonnet-5",
+      "result": {
+        "locale": "ko",
+        "verdict": "needs_changes",
+        "summary": "전반적으로 번역 품질이 높고 자연스러우며 개인정보 관련 진술도 명확합니다. 다만 몇 가지 조사 사용 오류, 문장 부호/줄바꿈 표기 문제, 그리고 하나의 사실 표현 관련 소수 이슈가 있어 수정이 필요합니다. 블로커 수준의 문제는 없습니다.",
+        "issues": [
+          {
+            "source": "runtime",
+            "key": "loadingChromeSummarizer",
+            "severity": "minor",
+            "current": "Chrome 기기 내 요약 모델 로드 중…",
+            "suggested": "Chrome 기기 내 요약 모델 불러오는 중…",
+            "reason": "다른 로딩 메시지들은 '불러오는 중'을 사용하는데(예: loading, loadingChromeModel) 이 항목만 '로드 중'을 사용해 용어 일관성이 떨어집니다. 통일된 용어 사용을 권장합니다."
+          },
+          {
+            "source": "runtime",
+            "key": "chromeSummarizerReady",
+            "severity": "minor",
+            "current": "Chrome 요약 모델 준비 완료. 생성 중…",
+            "suggested": "Chrome 기기 내 요약 모델 준비 완료. 생성 중…",
+            "reason": "유사한 다른 메시지(chromeModelReady 등)는 '기기 내'를 명시하는데 이 항목만 생략되어 있어 일관성이 떨어집니다."
+          },
+          {
+            "source": "runtime",
+            "key": "pageChanged",
+            "severity": "minor",
+            "current": "페이지가 “{title}”(으)로 변경되었습니다. 새 요청은 이 페이지를 기준으로 처리되며, 이전 출처 버튼은 정확한 위치로 이동하지 못할 수 있습니다.",
+            "suggested": "페이지가 “{title}”(으)로 변경되었습니다. 새 요청은 이 페이지를 기준으로 처리되며, 이전 출처 링크는 정확한 위치로 이동하지 못할 수 있습니다.",
+            "reason": "'출처 버튼'보다 UI 맥락상 '출처 링크' 또는 '출처'가 더 자연스러울 수 있습니다(소소한 용어 선택 사항)."
+          },
+          {
+            "source": "runtime",
+            "key": "corsSetup",
+            "severity": "minor",
+            "current": "CORS 설정 ({platform})",
+            "suggested": "CORS 설정({platform})",
+            "reason": "한국어 표기에서는 괄호 앞에 불필요한 공백을 넣지 않는 것이 일반적입니다. 다른 항목들(예: recommended, sources)과의 일관성을 위해 공백 제거를 권장합니다."
+          },
+          {
+            "source": "runtime",
+            "key": "sources",
+            "severity": "minor",
+            "current": "출처({count})",
+            "suggested": "출처 ({count})",
+            "reason": "corsSetup과 반대로 이 항목은 괄호 앞에 공백이 없어 표기 방식이 서로 다릅니다. 두 항목 중 하나의 스타일로 통일하는 것을 권장합니다."
+          },
+          {
+            "source": "runtime",
+            "key": "localScopeNotice",
+            "severity": "minor",
+            "current": "선택한 로컬 Provider에는 “{scope}”만 전달됩니다.",
+            "suggested": "선택한 로컬 Provider에는 “{scope}”만 전달됩니다.",
+            "reason": "내용은 정확하나 '전달됩니다'가 다소 수동적입니다. 문제 없는 수준이나 참고용으로 남깁니다(변경 불필요)."
+          },
+          {
+            "source": "privacyPolicy",
+            "key": "",
+            "severity": "minor",
+            "current": "Chrome이 모델·언어 팩 또는 확장 프로그램을 업데이트할 수 있지만, VerityRead는 이러한\n  브라우저 관리 요청에 페이지 내용을 포함하지 않습니다.",
+            "suggested": "Chrome이 모델·언어 팩 또는 확장 프로그램을 업데이트할 수 있지만, VerityRead는 이러한 브라우저 관리 요청에 페이지 내용을 포함하지 않습니다.",
+            "reason": "마크다운 소스 내 줄바꿈으로 인해 들여쓰기가 어색하게 보일 수 있습니다(렌더링 시 큰 문제는 아니지만 원본 정돈 권장)."
+          },
+          {
+            "source": "storeListing",
+            "key": "",
+            "severity": "minor",
+            "current": "Chrome Built-in AI 또는 `127.0.0.1:11434`에서 실행하는 사용자의 Ollama 모델을 선택할 수 있습니다.",
+            "suggested": "Chrome Built-in AI 또는 `127.0.0.1:11434`에서 실행 중인 사용자의 Ollama 모델을 선택할 수 있습니다.",
+            "reason": "'실행하는'보다 '실행 중인'이 더 자연스러운 한국어 표현입니다."
+          },
+          {
+            "source": "privacyPolicy",
+            "key": "",
+            "severity": "minor",
+            "current": "게시자나\n다른 사람은 기기에서 로컬로 처리된 페이지 내용을 확인할 수 없습니다.",
+            "suggested": "게시자나 다른 사람은 기기에서 로컬로 처리된 페이지 내용을 확인할 수 없습니다.",
+            "reason": "줄바꿈으로 문장이 부자연스럽게 끊겨 있습니다. 가독성을 위해 한 줄로 정리하는 것을 권장합니다(내용 자체는 정확함)."
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 8422,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1886,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      }
+    }
+  ]
+}
