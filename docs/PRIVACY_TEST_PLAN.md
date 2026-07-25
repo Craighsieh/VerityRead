@@ -1,4 +1,4 @@
-# VaultLens Privacy Test Plan
+# VerityRead Privacy Test Plan
 
 ## 1. Egress tests
 
@@ -11,7 +11,12 @@
 | E3 | Translate selection | Translate selected confidential string | Selection absent externally |
 | E4 | Health check | Run capability/health | No page URL/title/body in Ollama `/api/tags` |
 
-Automation: `pnpm test:egress` (`tests/e2e/egress.spec.ts`).
+Automation:
+
+- `tests/e2e/egress.spec.ts` validates the marker-detection harness.
+- `tests/e2e/extension.spec.ts` loads the production MV3 bundle and verifies
+  permissions, consent, storage migration, and no unauthorized read/egress.
+- E1–E4 remain manual release checks against the selected real local Provider.
 
 Exempt destinations: `chrome-extension:`, `data:`, `127.0.0.1`, `localhost`.
 
@@ -35,7 +40,7 @@ Exempt destinations: `chrome-extension:`, `data:`, `127.0.0.1`, `localhost`.
 
 | ID | Case | Pass |
 |---|---|---|
-| P1 | No auto extract on navigate | Content script idle until message |
+| P1 | No auto extract on navigate | Manifest has no static content script; dynamic injection fails without a user grant |
 | P2 | `chrome://` / Web Store | Shows PAGE_PROTECTED |
 | P3 | Gmail-class SPA | Quality fallback / selection guidance |
 | P4 | GitHub README/Issue | Extract + jump works |
@@ -50,4 +55,6 @@ Exempt destinations: `chrome-extension:`, `data:`, `127.0.0.1`, `localhost`.
 
 ## Release gate
 
-Every release must run: unit tests, egress harness, `scan:dist`, manual smoke on article + GitHub + protected page.
+Every release must run: lint, typecheck, unit tests, loaded-extension E2E,
+egress harness, production build, `scan:dist`, and manual smoke on an article,
+GitHub, a protected page, and both local Providers where available.

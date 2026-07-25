@@ -7,6 +7,7 @@ import { ChatPanel } from './components/ChatPanel';
 import { PrivacyCenter } from './components/PrivacyCenter';
 import { SettingsPanel } from './components/SettingsPanel';
 import { SpikeLabs } from './components/SpikeLabs';
+import { productName, t } from '@/i18n';
 
 type DrawerId = 'privacy' | 'settings' | null;
 
@@ -56,7 +57,7 @@ export function App() {
   if (loading) {
     return (
       <div className="app">
-        <div className="content">Loading…</div>
+        <div className="content">{t('loading')}</div>
       </div>
     );
   }
@@ -66,8 +67,8 @@ export function App() {
       <div className="app">
         <header className="header">
           <div className="brand">
-            <strong>VaultLens</strong>
-            <span className="muted">Privacy-first local AI</span>
+            <strong>{productName()}</strong>
+            <span className="muted">{t('tagline')}</span>
           </div>
         </header>
         <main className="content">
@@ -81,8 +82,8 @@ export function App() {
     <div className="app">
       <header className="header">
         <div className="brand">
-          <strong>VaultLens</strong>
-          <span className="muted">Page content stays local</span>
+          <strong>{productName()}</strong>
+          <span className="muted">{t('pageContentStaysLocal')}</span>
         </div>
         <div className="header-controls">
           <div
@@ -90,10 +91,10 @@ export function App() {
             title={
               providerStatus?.message ??
               (checkingProvider
-                ? 'Checking local provider'
+                ? t('providerChecking')
                 : providerStatus?.healthy
-                  ? 'Local provider is ready'
-                  : 'Provider status unavailable')
+                  ? t('providerReady')
+                  : t('providerUnavailable'))
             }
           >
             <span
@@ -104,10 +105,10 @@ export function App() {
             <span>{providerLabel}</span>
             <span className="provider-state">
               {checkingProvider
-                ? 'Checking'
+                ? t('checking')
                 : providerStatus?.healthy
-                  ? 'Ready'
-                  : 'Unavailable'}
+                  ? t('ready')
+                  : t('unavailable')}
             </span>
           </div>
           <button
@@ -115,14 +116,14 @@ export function App() {
             className="header-button"
             onClick={() => setDrawer('privacy')}
           >
-            Privacy
+            {t('privacy')}
           </button>
           <button
             type="button"
             className="header-button"
             onClick={() => setDrawer('settings')}
           >
-            Settings
+            {t('settings')}
           </button>
         </div>
       </header>
@@ -147,17 +148,17 @@ export function App() {
             className="drawer"
             role="dialog"
             aria-modal="true"
-            aria-label={drawer === 'privacy' ? 'Privacy' : 'Settings'}
+            aria-label={drawer === 'privacy' ? t('privacy') : t('settings')}
           >
             <div className="drawer-header">
-              <strong>{drawer === 'privacy' ? 'Privacy' : 'Settings'}</strong>
+              <strong>{drawer === 'privacy' ? t('privacy') : t('settings')}</strong>
               <button
                 type="button"
                 className="header-button"
                 onClick={() => setDrawer(null)}
-                aria-label="Close drawer"
+                aria-label={t('close')}
               >
-                Close
+                {t('close')}
               </button>
             </div>
             <div className="drawer-body">
@@ -167,17 +168,19 @@ export function App() {
                   onUpdate={update}
                   lastReceiptSummary={
                     lastReceipt
-                      ? `${lastReceipt.taskType} · ${lastReceipt.providerId}/${lastReceipt.model} · cloud inference: false`
+                      ? `${lastReceipt.taskType} · ${lastReceipt.providerId}/${lastReceipt.model} · ${t('cloudInferenceFalse')}`
                       : undefined
                   }
                 />
               ) : (
                 <>
                   <SettingsPanel preferences={preferences} onUpdate={update} />
-                  <details className="diagnostics">
-                    <summary>Diagnostics (Labs)</summary>
-                    <SpikeLabs />
-                  </details>
+                  {import.meta.env.DEV && (
+                    <details className="diagnostics">
+                      <summary>{t('diagnostics')}</summary>
+                      <SpikeLabs />
+                    </details>
+                  )}
                 </>
               )}
             </div>

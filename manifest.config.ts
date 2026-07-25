@@ -2,17 +2,17 @@ import { defineManifest } from '@crxjs/vite-plugin';
 
 export default defineManifest({
   manifest_version: 3,
-  name: 'VaultLens',
+  name: '__MSG_extensionName__',
   version: '0.1.0',
-  description:
-    'Privacy-first local AI browser assistant. Summarize, ask, and translate the current page without sending page content to cloud inference.',
+  default_locale: 'en',
+  description: '__MSG_extensionDescription__',
   icons: {
     '16': 'icons/icon16.png',
     '48': 'icons/icon48.png',
     '128': 'icons/icon128.png',
   },
   action: {
-    default_title: 'Open VaultLens',
+    default_title: '__MSG_actionTitle__',
     default_icon: {
       '16': 'icons/icon16.png',
       '48': 'icons/icon48.png',
@@ -27,16 +27,10 @@ export default defineManifest({
   },
   permissions: ['activeTab', 'scripting', 'storage', 'sidePanel', 'contextMenus'],
   host_permissions: ['http://127.0.0.1:11434/*'],
+  optional_host_permissions: ['http://*/*', 'https://*/*'],
   content_security_policy: {
     extension_pages:
       "script-src 'self'; object-src 'none'; connect-src 'self' http://127.0.0.1:11434;",
   },
-  content_scripts: [
-    {
-      matches: ['http://*/*', 'https://*/*'],
-      js: ['src/content/index.ts'],
-      run_at: 'document_idle',
-    },
-  ],
   offline_enabled: true,
 });

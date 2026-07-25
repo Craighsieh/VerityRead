@@ -52,7 +52,7 @@ describe('extractFromDocument', () => {
         <article>
           <h1>How local inference should work</h1>
           <p>
-            VaultLens should extract the article itself before asking a local model
+            VerityRead should extract the article itself before asking a local model
             to summarize it. This paragraph contains the core claim and enough
             explanatory detail to represent meaningful editorial content.
           </p>

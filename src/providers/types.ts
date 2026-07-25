@@ -80,15 +80,40 @@ export interface ChromeTranslatorStatic {
   }): Promise<ChromeTranslatorSession>;
 }
 
+export interface ChromeLanguageDetection {
+  detectedLanguage: string;
+  confidence: number;
+}
+
+export interface ChromeLanguageDetectorSession {
+  detect(input: string): Promise<ChromeLanguageDetection[]>;
+  destroy(): void;
+}
+
+export interface ChromeLanguageDetectorStatic {
+  availability(): Promise<Availability | string>;
+  create(options?: {
+    monitor?: (m: {
+      addEventListener: (
+        type: string,
+        cb: (e: { loaded?: number; total?: number }) => void,
+      ) => void;
+    }) => void;
+    signal?: AbortSignal;
+  }): Promise<ChromeLanguageDetectorSession>;
+}
+
 declare global {
   interface Window {
     LanguageModel?: ChromeLanguageModelStatic;
     Summarizer?: ChromeSummarizerStatic;
     Translator?: ChromeTranslatorStatic;
+    LanguageDetector?: ChromeLanguageDetectorStatic;
     ai?: {
       languageModel?: ChromeLanguageModelStatic;
       summarizer?: ChromeSummarizerStatic;
       translator?: ChromeTranslatorStatic;
+      languageDetector?: ChromeLanguageDetectorStatic;
     };
   }
 }

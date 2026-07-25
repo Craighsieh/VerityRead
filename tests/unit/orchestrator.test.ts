@@ -268,6 +268,9 @@ describe('TaskOrchestrator map-reduce progress', () => {
       dispose: vi.fn(async () => undefined),
     };
     vi.mocked(providerRegistry.get).mockReturnValue(provider);
+    vi.mocked(providerRegistry.getChrome).mockReturnValue({
+      translateWithTranslator: vi.fn(async () => null),
+    } as never);
 
     await expect(
       new TaskOrchestrator().translate('empty-translation', 'Hello.', 'zh-Hant', {
@@ -277,5 +280,37 @@ describe('TaskOrchestrator map-reduce progress', () => {
       code: 'PROVIDER_UNHEALTHY',
       message: 'The local model completed without returning translated text.',
     });
+  });
+
+  it('prefers Chrome Translator before the selected provider LLM', async () => {
+    const ollamaTranslate = vi.fn();
+    const provider = {
+      id: 'ollama',
+      displayName: 'Ollama',
+      translate: ollamaTranslate,
+    } as unknown as LocalAIProvider;
+    vi.mocked(providerRegistry.get).mockReturnValue(provider);
+    vi.mocked(providerRegistry.getChrome).mockReturnValue({
+      translateWithTranslator: vi.fn(async (request) => ({
+        taskId: request.taskId,
+        translatedText: 'こんにちは',
+        detectedLanguage: 'en',
+        targetLanguage: request.targetLanguage,
+        engine: 'chrome-translator',
+        providerId: 'chrome-builtin',
+        model: 'Chrome Translator',
+      })),
+    } as never);
+
+    const translated = await new TaskOrchestrator().translate(
+      'chrome-first',
+      'Hello',
+      'ja',
+      { providerId: 'ollama' },
+    );
+
+    expect(translated.result.engine).toBe('chrome-translator');
+    expect(translated.receipt.inferenceLocation).toBe('chrome-on-device');
+    expect(ollamaTranslate).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ALLOWED_NETWORK_DESTINATIONS, type UserPreferences } from '@/shared/types';
 import { clearAllLocalData, clearHistory, clearSummaryCache } from '@/storage';
 import { setPreferences } from '@/storage/preferences';
+import { t } from '@/i18n';
 
 interface Props {
   preferences: UserPreferences;
@@ -19,50 +20,54 @@ export function PrivacyCenter({ preferences, onUpdate, lastReceiptSummary }: Pro
       await clearAllLocalData();
       await setPreferences({ onboardingComplete: preferences.onboardingComplete });
     }
-    setStatus(`Cleared: ${scope}`);
+    setStatus(t('cleared', { scope }));
   };
 
   return (
     <div className="stack">
       <div className="card stack">
-        <h2>Privacy Center</h2>
-        <p className="muted">
-          Verify where data goes. Page content never enters download, license, or
-          update requests.
-        </p>
+        <h2>{t('privacyCenter')}</h2>
+        <p className="muted">{t('privacyCenterBody')}</p>
+        <a
+          href="https://craighsieh.github.io/VerityRead/privacy/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {t('privacyPolicy')}
+        </a>
         <div>
-          Default Provider: <code>{preferences.defaultProviderId}</code>
+          {t('defaultProvider')}: <code>{preferences.defaultProviderId}</code>
         </div>
         <div>
-          Offline Lock:{' '}
-          <strong>{preferences.offlineLock ? 'ON' : 'OFF'}</strong>
+          {t('offlineLock')}:{' '}
+          <strong>{preferences.offlineLock ? t('on') : t('offDefault')}</strong>
         </div>
         <div>
-          History: <strong>{preferences.historyEnabled ? 'ON' : 'OFF (default)'}</strong>
+          {t('history')}:{' '}
+          <strong>{preferences.historyEnabled ? t('on') : t('offDefault')}</strong>
         </div>
         {lastReceiptSummary && (
-          <p className="muted">Last task: {lastReceiptSummary}</p>
+          <p className="muted">
+            {t('lastTask', { summary: lastReceiptSummary })}
+          </p>
         )}
       </div>
 
       <div className="card stack">
-        <h3>Offline Lock</h3>
-        <p className="muted">
-          When enabled, only extension resources and loopback (Ollama) are allowed.
-          License refresh and non-loopback downloads are paused.
-        </p>
+        <h3>{t('offlineLock')}</h3>
+        <p className="muted">{t('offlineLockBody')}</p>
         <label className="row">
           <input
             type="checkbox"
             checked={preferences.offlineLock}
             onChange={(e) => void onUpdate({ offlineLock: e.target.checked })}
           />
-          Enable Offline Lock
+          {t('enableOfflineLock')}
         </label>
       </div>
 
       <div className="card stack">
-        <h3>Allowed network destinations</h3>
+        <h3>{t('allowedDestinations')}</h3>
         <ul>
           {ALLOWED_NETWORK_DESTINATIONS.map((d) => (
             <li key={d}>{d}</li>
@@ -71,20 +76,20 @@ export function PrivacyCenter({ preferences, onUpdate, lastReceiptSummary }: Pro
       </div>
 
       <div className="card stack">
-        <h3>Clear local data</h3>
+        <h3>{t('clearLocalData')}</h3>
         <div className="row">
           <button type="button" className="btn" onClick={() => void clear('cache')}>
-            Clear cache
+            {t('clearCache')}
           </button>
           <button type="button" className="btn" onClick={() => void clear('history')}>
-            Clear history
+            {t('clearHistory')}
           </button>
           <button
             type="button"
             className="btn danger"
             onClick={() => void clear('all')}
           >
-            Clear all local data
+            {t('clearAll')}
           </button>
         </div>
         {status && <p className="muted">{status}</p>}

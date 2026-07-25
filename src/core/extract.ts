@@ -2,6 +2,7 @@ import { Readability } from '@mozilla/readability';
 import { createAppError } from '@/shared/errors';
 import type { ContextScope, ExtractedPage, SourceBlock } from '@/shared/types';
 import { buildSourceBlockId, cssPath, fingerprintText } from './fingerprint';
+import { t } from '@/i18n';
 
 const PROTECTED_PREFIXES = [
   'chrome://',
@@ -373,9 +374,9 @@ export function scopeExtractedPage(
     const selectionText = options?.selectionText?.trim() ?? '';
     if (!selectionText) {
       throw createAppError('CONTENT_INSUFFICIENT', {
-        message: 'No text is selected on the current page.',
-        impact: 'Selected-text context needs a highlighted passage.',
-        nextSteps: ['Select a passage on the page, then try again.'],
+        message: t('noSelection'),
+        impact: t('noSelectionImpact'),
+        nextSteps: [t('noSelectionStep')],
       });
     }
     return scopedPage(page, scope, [

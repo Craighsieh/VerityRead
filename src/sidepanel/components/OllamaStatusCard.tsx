@@ -1,9 +1,9 @@
 import { createAppError } from '@/shared/errors';
 import type { ProviderStatus } from '@/shared/types';
-import { OLLAMA_CORS_GUIDE } from '@/providers/ollama';
 import { ErrorBox } from './ErrorBox';
+import { t, type MessageKey } from '@/i18n';
 
-type Platform = keyof typeof OLLAMA_CORS_GUIDE;
+type Platform = 'macos' | 'windows' | 'linux';
 
 function detectPlatform(): Platform {
   const userAgent = navigator.userAgent.toLowerCase();
@@ -36,7 +36,7 @@ export function OllamaStatusCard({
     return (
       <div className="connection-status" role="status">
         <span className="status-dot warn" />
-        Checking Ollama on loopback…
+        {t('ollamaChecking')}
       </div>
     );
   }
@@ -49,12 +49,16 @@ export function OllamaStatusCard({
       <div className="connection-status stack" role="status">
         <div className="row">
           <span className="status-dot ok" />
-          <strong>Ollama connected</strong>
-          <span className="badge">{status.availability}</span>
+          <strong>{t('ollamaConnected')}</strong>
+          <span className="badge">{t(status.availability as MessageKey)}</span>
         </div>
-        {status.model && <span className="muted">Selected model: {status.model}</span>}
+        {status.model && (
+          <span className="muted">{t('selectedModel', { model: status.model })}</span>
+        )}
         {models.length > 0 && (
-          <span className="muted">Installed: {models.join(', ')}</span>
+          <span className="muted">
+            {t('installedModels', { models: models.join(', ') })}
+          </span>
         )}
       </div>
     );
@@ -65,27 +69,38 @@ export function OllamaStatusCard({
   });
   const platform = detectPlatform();
   const runtimeId = extensionId();
+  const platformLabel =
+    platform === 'macos' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux';
+  const corsSteps =
+    platform === 'macos'
+      ? t('corsMacSteps')
+      : platform === 'windows'
+        ? t('corsWindowsSteps')
+        : t('corsLinuxSteps');
+  const corsCommand =
+    platform === 'macos'
+      ? `launchctl setenv OLLAMA_ORIGINS "chrome-extension://${runtimeId}"`
+      : platform === 'windows'
+        ? `OLLAMA_ORIGINS=chrome-extension://${runtimeId}`
+        : `export OLLAMA_ORIGINS="chrome-extension://${runtimeId}"`;
 
   return (
     <div className="stack">
       <ErrorBox error={error} />
       {status.errorCode === 'OLLAMA_CORS' && (
         <div className="connection-status stack">
-          <strong>CORS setup ({platform})</strong>
-          <ol>
-            {OLLAMA_CORS_GUIDE[platform].map((line) => (
-              <li key={line}>
-                <code>{line.replace('YOUR_EXTENSION_ID', runtimeId)}</code>
-              </li>
-            ))}
-          </ol>
+          <strong>{t('corsSetup', { platform: platformLabel })}</strong>
+          <span>{corsSteps}</span>
+          <code>{corsCommand}</code>
           <span className="muted">
-            Extension ID: <code>{runtimeId}</code>
+            {t('extensionId')}: <code>{runtimeId}</code>
           </span>
         </div>
       )}
       {models.length > 0 && (
-        <div className="connection-status">Installed models: {models.join(', ')}</div>
+        <div className="connection-status">
+          {t('installedModels', { models: models.join(', ') })}
+        </div>
       )}
     </div>
   );

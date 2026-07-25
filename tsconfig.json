@@ -20,7 +20,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["chrome", "vite/client", "node"]
+    "types": ["chrome", "vite/client", "node", "@crxjs/vite-plugin/client"]
   },
   "include": ["src", "scripts", "tests/unit", "vite.config.ts", "vitest.config.ts"]
 }

@@ -4,9 +4,8 @@
  * Loads a fixture page and asserts that sensitive page content strings
  * never appear in any non-loopback / non-extension request body, query, or headers.
  *
- * Note: Full Chrome-extension loading in Playwright requires a built dist/ and
- * launchPersistentContext with --load-extension. This suite validates the
- * network assertion harness and a simulated task path.
+ * This focused harness complements extension.spec.ts, which loads the built
+ * MV3 bundle and verifies the same boundary from the real service worker.
  */
 import { test, expect, type Request } from '@playwright/test';
 import { readFileSync } from 'node:fs';
@@ -76,7 +75,7 @@ test.describe('egress harness', () => {
     await page.evaluate(() => {
       const text = document.body.innerText;
       // Intentionally local: do not fetch with page text
-      (window as unknown as { __vaultlensLocalSummary: string }).__vaultlensLocalSummary =
+      (window as unknown as { __verityreadLocalSummary: string }).__verityreadLocalSummary =
         text.slice(0, 200);
     });
 

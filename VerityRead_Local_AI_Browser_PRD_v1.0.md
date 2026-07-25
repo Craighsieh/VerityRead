@@ -1,8 +1,8 @@
-# VaultLens — Privacy-First Local AI Browser Assistant
+# VerityRead／真閱 — Privacy-First Local AI Browser Assistant
 
 > 產品需求文件（PRD）v1.0  
 > 日期：2026-07-25  
-> 產品代號：VaultLens  
+> 正式名稱：VerityRead；中文名稱：真閱
 > 目標平台：Chrome Desktop（第一階段）；Edge／Firefox 後續評估  
 > 文件用途：可直接交給 Codex、Cursor、Claude Code 等開發工具進行技術規劃與實作
 
@@ -13,7 +13,7 @@
 本版相較原始構想做出以下關鍵調整：
 
 1. **不再使用 PrivateMind AI 作為產品名稱**  
-   市面已有同名或高度近似的本機 AI 產品。現階段改用產品代號 **VaultLens**，正式上市前仍須完成商標、Chrome Web Store、網域及社群帳號查核。
+   正式英文名稱為 **VerityRead**，中文名稱為 **真閱**。公開上架前仍須完成商標、Chrome Web Store、網域及社群帳號查核。
 
 2. **將產品承諾改為可驗證的描述**  
    不使用「100% 零網路」或「隱私 100%」等絕對說法，改為：
@@ -46,7 +46,7 @@
 
 ### 1.1 產品定位
 
-VaultLens 是一款以隱私為核心的桌面瀏覽器 AI 助手。它讓使用者直接在瀏覽器側邊欄中摘要網頁、詢問頁面內容及翻譯文字，並優先使用裝置上的模型或使用者自行管理的本機模型服務完成推理。
+VerityRead（真閱）是一款以隱私為核心的桌面瀏覽器 AI 助手。它讓使用者直接在瀏覽器側邊欄中摘要網頁、詢問頁面內容及翻譯文字，並優先使用裝置上的模型或使用者自行管理的本機模型服務完成推理。
 
 ### 1.2 一句話價值主張
 
@@ -54,7 +54,7 @@ VaultLens 是一款以隱私為核心的桌面瀏覽器 AI 助手。它讓使用
 
 ### 1.3 核心差異
 
-VaultLens 不以「支援最多模型」作為主要競爭點，而以以下四項建立差異：
+VerityRead 不以「支援最多模型」作為主要競爭點，而以以下四項建立差異：
 
 - **使用者主動授權**：只有在使用者點擊功能後，才讀取目前分頁。
 - **可看見的本機路由**：每次任務清楚顯示使用中的 Provider、模型及資料去向。
@@ -84,7 +84,7 @@ VaultLens 不以「支援最多模型」作為主要競爭點，而以以下四�
 
 ### 2.2 不解決的問題
 
-VaultLens 第一階段不處理：
+VerityRead 第一階段不處理：
 
 - 自動操作網頁、下單、寄信或提交表單。
 - 雲端模型 fallback。
@@ -330,7 +330,7 @@ VaultLens 第一階段不處理：
 ### 7.4 選取翻譯
 
 1. 使用者反白選取文字。
-2. 右鍵選擇「使用 VaultLens 翻譯」。
+2. 右鍵選擇「使用 VerityRead／真閱翻譯」。
 3. 系統打開或更新 Side Panel。
 4. 顯示來源語言、目標語言、翻譯結果及引擎。
 5. 使用者複製結果；原文不自動保存。
@@ -814,4 +814,3 @@ Edge 與 Firefox 即使部分 API 可用，也必須完成獨立 QA 後才能標
 - Transformers.js browser and cache behavior：  
   https://huggingface.co/docs/transformers.js/
   https://huggingface.co/docs/transformers.js/api/env
-

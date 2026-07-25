@@ -1,4 +1,4 @@
-# VaultLens Tasks (Phase 0 + Phase 1)
+# VerityRead Tasks (Phase 0 + Phase 1)
 
 ## Stage A — Scaffold & docs
 
@@ -57,3 +57,16 @@
 
 - [x] Build + CI script (`pnpm pipeline`)
 - [x] Alpha checklist (`docs/ALPHA_CHECKLIST.md`)
+
+## Stage I — 0.1.0 release readiness
+
+- [x] VerityRead／真閱 identity and public repository metadata
+- [x] Five runtime and manifest locales: English, Traditional Chinese, Simplified Chinese, Japanese, Korean
+- [x] Prominent in-product privacy disclosure and consent versioning
+- [x] Dynamic page-reader injection plus exact-site optional permission controls
+- [x] Opt-in cache migration and fixed Ollama loopback boundary
+- [x] Public privacy policy and localized Chrome Web Store listing copy
+- [x] Store icon, promo tiles, and two real UI screenshots per locale
+- [x] Type-aware ESLint and loaded-extension Playwright tests in CI
+- [ ] Anthropic-assisted Japanese/Korean language QA (requires local API credential)
+- [ ] External manual smoke and Chrome Web Store Developer Dashboard submission

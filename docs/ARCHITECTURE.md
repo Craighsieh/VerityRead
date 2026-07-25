@@ -1,4 +1,4 @@
-# VaultLens Architecture
+# VerityRead Architecture
 
 ## Extension contexts
 
@@ -6,7 +6,7 @@
 |---|---|---|
 | Service Worker | `src/background/index.ts` | Event coordination, context menus, preference/health routing, tab messaging. Does **not** run long model inference. |
 | Side Panel | `src/sidepanel/*` | Primary React UI, Built-in AI sessions (window context), streaming, Privacy Center, Onboarding. |
-| Content Script | `src/content/index.ts` | User-triggered extract, source jump + highlight. Never auto-reads on load. |
+| Dynamically injected page reader | `src/content/index.ts` | Injected only after a user-triggered task; extracts content and supports source jump/highlight. No static `content_scripts` entry is shipped. |
 
 ## Message flow
 
@@ -43,6 +43,10 @@ Implementations:
 | IndexedDB `history` | Optional history | **Off** by default |
 | Task memory | Page extract / selection | Cleared after task |
 
+Version 0.1.0 migrates the former `vaultlens.preferences` key and `vaultlens`
+IndexedDB database to the VerityRead namespace, forces summary caching off, and
+closes legacy custom Ollama endpoints.
+
 ## Network boundaries
 
 Allowed:
@@ -64,10 +68,11 @@ Offline Lock (`src/core/offlineLock.ts`) restricts fetches to extension + loopba
 ## Content pipeline
 
 1. User clicks Summarize / Ask / Translate
-2. Content script extracts structured plain-text blocks with `sourceBlockId`
-3. Orchestrator chunks + (for Ask) retrieves top-k passages
-4. Provider generates; UI streams tokens
-5. Citations verified against page text; jump-back via locator
+2. Background injects the page reader under `activeTab` or an exact-site grant
+3. Page reader extracts structured plain-text blocks with `sourceBlockId`
+4. Orchestrator chunks + (for Ask) retrieves top-k passages
+5. Provider generates; UI streams tokens
+6. Citations verified against page text; jump-back via locator
 
 ## Key modules
 

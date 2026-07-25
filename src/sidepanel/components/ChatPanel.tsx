@@ -24,6 +24,7 @@ import {
 import { Citations } from './Citations';
 import { ErrorBox } from './ErrorBox';
 import { PrivacyReceiptView } from './PrivacyReceiptView';
+import { productName, t } from '@/i18n';
 
 interface Props {
   preferences: UserPreferences;
@@ -84,8 +85,7 @@ type SelectionAction = 'explain' | 'simplify';
 const WELCOME_MESSAGE: AssistantChatMessage = {
   id: 'welcome',
   role: 'assistant',
-  content:
-    'Ask anything about the current page, or choose an action below. VaultLens reads only the context you choose after you send a request.',
+  content: t('welcomeChat'),
   citations: [],
 };
 
@@ -94,29 +94,29 @@ const SUMMARY_ACTIONS: Array<{
   label: string;
   requestLabel: string;
 }> = [
-  { mode: 'quick', label: 'Summary', requestLabel: 'Summarize this content.' },
+  { mode: 'quick', label: t('summary'), requestLabel: t('summarizeRequest') },
   {
     mode: 'bullets',
-    label: 'Key points',
-    requestLabel: 'Give me the key points from this content.',
+    label: t('keyPoints'),
+    requestLabel: t('keyPointsRequest'),
   },
   {
     mode: 'outline',
-    label: 'Outline',
-    requestLabel: 'Create an outline of this content.',
+    label: t('outline'),
+    requestLabel: t('outlineRequest'),
   },
 ];
 
 const SCOPE_LABELS: Record<ContextScope, string> = {
-  page: 'Entire page',
-  selection: 'Selected text',
-  section: 'Current section',
+  page: t('entirePage'),
+  selection: t('selectedText'),
+  section: t('currentSection'),
 };
 
 const READING_LEVEL_LABELS: Record<ReadingLevel, string> = {
-  simple: 'Simple',
-  standard: 'Standard',
-  deep: 'Deep',
+  simple: t('simple'),
+  standard: t('standard'),
+  deep: t('deep'),
 };
 
 function assistantMessage(
@@ -138,9 +138,9 @@ function assistantMessage(
 
 function selectedTextQuestion(action: SelectionAction): string {
   if (action === 'simplify') {
-    return 'Rewrite the selected text in plain language without changing its meaning or adding facts.';
+    return t('simplifyInstruction');
   }
-  return "Explain the selected text in context. Define unfamiliar terms and preserve the author's meaning.";
+  return t('explainInstruction');
 }
 
 export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props) {
@@ -196,7 +196,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
     setError(null);
     setStreaming('');
     streamingRef.current = '';
-    setStage('Preparing local request…');
+    setStage(t('preparingLocalRequest'));
     setProgressPercent(5);
     setElapsedSeconds(0);
     if (userContent) {
@@ -227,7 +227,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
       }
     }
     if (event.type === 'token' && event.text) {
-      setStage('Generating answer locally…');
+      setStage(t('generatingLocally'));
       setProgressPercent((previous) => Math.max(previous, 75));
       updateStream(event.text);
     }
@@ -244,10 +244,10 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
   ): Promise<ExtractedPage> => {
     setStage(
       scope === 'selection'
-        ? 'Reading selected text…'
+        ? t('readingSelection')
         : scope === 'section'
-          ? 'Reading the current section…'
-          : 'Reading the current page…',
+          ? t('readingSection')
+          : t('readingPage'),
     );
     setProgressPercent(15);
     const extractResult = await sendMessage({
@@ -273,7 +273,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
     setPageContext((previous) => {
       if (previous && previous.url !== page.url) {
         setPageChangeNotice(
-          `Page changed to “${page.title}”. New requests use this page; older source buttons may no longer jump correctly.`,
+          t('pageChanged', { title: page.title }),
         );
       }
       return {
@@ -332,7 +332,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
         ]);
         onReceipt(result.receipt);
       } else {
-        setStage('Finding relevant passages…');
+        setStage(t('findingPassages'));
         const result = await taskOrchestrator.ask(id, page, command.question, {
           providerId: preferences.defaultProviderId,
           readingLevel: command.readingLevel,
@@ -396,9 +396,9 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
 
   const selectionRequiredError = () =>
     createAppError('CONTENT_INSUFFICIENT', {
-      message: 'No text is selected on the current page.',
-      impact: 'This action needs highlighted page text.',
-      nextSteps: ['Select a passage on the page, then try again.'],
+      message: t('noSelection'),
+      impact: t('noSelectionImpact'),
+      nextSteps: [t('noSelectionStep')],
     });
 
   const runSelectionAction = async (action: SelectionAction, providedText?: string) => {
@@ -416,8 +416,8 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
       question,
       requestLabel:
         action === 'simplify'
-          ? 'Simplify the selected text.'
-          : 'Explain the selected text.',
+          ? t('simplifyRequest')
+          : t('explainRequest'),
       scope: 'selection',
       readingLevel: action === 'simplify' ? 'simple' : preferences.readingLevel,
       answerLength: 'normal',
@@ -449,9 +449,9 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
     setContextScope('selection');
     setPendingSelectionText(selectedText);
     const targetLabel = getTargetLanguageLabel(preferences.targetLanguage);
-    const id = beginTask(`Translate the selected text to ${targetLabel}.`);
+    const id = beginTask(t('translateSelectionRequest', { language: targetLabel }));
     try {
-      setStage(`Translating to ${targetLabel}…`);
+      setStage(t('translatingTo', { language: targetLabel }));
       setProgressPercent(45);
       const preparedSource = segmentForBilingual(selectedText).join('\n');
       const { result, receipt } = await taskOrchestrator.translate(
@@ -479,7 +479,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
     setTranslatingMessageId(latestAssistant.id);
     const targetLabel = getTargetLanguageLabel(preferences.targetLanguage);
     try {
-      setStage(`Translating the latest answer to ${targetLabel}…`);
+      setStage(t('translatingLatest', { language: targetLabel }));
       setProgressPercent(45);
       const preparedSource = segmentForBilingual(latestAssistant.content).join('\n');
       const { result, receipt } = await taskOrchestrator.translate(
@@ -558,20 +558,23 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
 
   const scopePlaceholder =
     contextScope === 'selection'
-      ? 'Ask about the selected text…'
+      ? t('askSelectionPlaceholder')
       : contextScope === 'section'
-        ? 'Ask about the current section…'
-        : 'Ask anything about this page…';
+        ? t('askSectionPlaceholder')
+        : t('askPagePlaceholder');
 
   return (
-    <section className="chat-shell" aria-label="VaultLens page chat">
+    <section className="chat-shell" aria-label={`${productName()} ${t('message')}`}>
       <div className="page-context">
         <div className="page-context-copy">
-          <strong>{pageContext?.title ?? 'Current page not attached'}</strong>
+          <strong>{pageContext?.title ?? t('currentPageNotAttached')}</strong>
           <span className="muted">
             {pageContext
-              ? `${pageContext.domain} · ${SCOPE_LABELS[pageContext.scope]} · read after your request`
-              : 'Send a request to read the active tab locally'}
+              ? t('contextAttached', {
+                  domain: pageContext.domain,
+                  scope: SCOPE_LABELS[pageContext.scope],
+                })
+              : t('attachHint')}
           </span>
         </div>
         <button
@@ -580,7 +583,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
           onClick={clearConversation}
           disabled={running}
         >
-          New chat
+          {t('newChat')}
         </button>
       </div>
 
@@ -595,12 +598,12 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
           <article
             key={message.id}
             className={`message-row ${message.role}`}
-            aria-label={message.role === 'user' ? 'You' : 'VaultLens'}
+            aria-label={message.role === 'user' ? t('you') : productName()}
           >
             <div className="message-label">
-              {message.role === 'user' ? 'You' : 'VaultLens'}
+              {message.role === 'user' ? t('you') : productName()}
               {message.role === 'assistant' && message.fromCache ? (
-                <span className="badge">local cache</span>
+                <span className="badge">{t('localCache')}</span>
               ) : null}
             </div>
             <div className="message-bubble">
@@ -616,8 +619,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
                   ))}
                   {!message.bilingual.aligned && (
                     <p className="muted pairing-note">
-                      The local model returned a different sentence structure, so
-                      VaultLens kept the original and translation as two blocks.
+                      {t('pairingNote')}
                     </p>
                   )}
                 </div>
@@ -640,7 +642,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
                       )
                     }
                   >
-                    Copy
+                    {t('copy')}
                   </button>
                 </div>
               )}
@@ -650,7 +652,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
                 <Citations citations={message.citations} />
                 {message.receipt && (
                   <details className="receipt-details">
-                    <summary>Privacy receipt</summary>
+                    <summary>{t('privacyReceipt')}</summary>
                     <PrivacyReceiptView receipt={message.receipt} />
                   </details>
                 )}
@@ -660,25 +662,27 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
         ))}
 
         {running && (
-          <article className="message-row assistant" aria-label="VaultLens is working">
-            <div className="message-label">VaultLens</div>
+          <article
+            className="message-row assistant"
+            aria-label={`${productName()} ${t('workingLocally')}`}
+          >
+            <div className="message-label">{productName()}</div>
             <div className="message-bubble generating">
               <div className="generating-status">
                 <span className="generating-dot" />
-                {stage || 'Working locally…'}
+                {stage || t('workingLocally')}
               </div>
               <div className="generating-meta">
                 <progress
                   value={progressPercent}
                   max={100}
-                  aria-label="Local model progress"
+                  aria-label={t('localModelProgress')}
                 />
                 <span>{elapsedSeconds}s</span>
               </div>
               {elapsedSeconds >= 8 && !streaming && (
                 <p className="slow-task-note">
-                  The first local response may take longer while the model loads. You can
-                  keep waiting or stop and retry with a shorter answer.
+                  {t('slowTask')}
                 </p>
               )}
               {streaming && <div className="message-text">{streaming}</div>}
@@ -690,14 +694,14 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
           <div className="stack">
             <ErrorBox error={error} />
             {lastCommand && (
-              <div className="recovery-actions" aria-label="Recovery options">
+              <div className="recovery-actions" aria-label={t('recoveryOptions')}>
                 <button
                   type="button"
                   className="btn"
                   disabled={running}
                   onClick={() => void retryLastCommand()}
                 >
-                  Retry
+                  {t('retry')}
                 </button>
                 <button
                   type="button"
@@ -705,7 +709,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
                   disabled={running}
                   onClick={() => void retryLastCommand(true)}
                 >
-                  Try shorter answer
+                  {t('shorterAnswer')}
                 </button>
               </div>
             )}
@@ -716,7 +720,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
       <div className="composer">
         <div className="context-controls">
           <label className="compact-field">
-            <span>Context</span>
+            <span>{t('context')}</span>
             <select
               value={contextScope}
               disabled={running}
@@ -726,13 +730,13 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
                 if (nextScope !== 'selection') setPendingSelectionText('');
               }}
             >
-              <option value="page">Entire page</option>
-              <option value="selection">Selected text</option>
-              <option value="section">Current section</option>
+              <option value="page">{t('entirePage')}</option>
+              <option value="selection">{t('selectedText')}</option>
+              <option value="section">{t('currentSection')}</option>
             </select>
           </label>
           <label className="compact-field">
-            <span>Reading</span>
+            <span>{t('reading')}</span>
             <select
               value={preferences.readingLevel}
               disabled={running}
@@ -753,7 +757,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
           </label>
         </div>
 
-        <div className="quick-actions" aria-label="Page actions">
+        <div className="quick-actions" aria-label={t('pageActions')}>
           {SUMMARY_ACTIONS.map((action) => (
             <button
               key={action.mode}
@@ -771,19 +775,19 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
             disabled={running || !latestAssistant}
             onClick={() => void makeLatestBilingual()}
           >
-            {translatingMessageId ? 'Translating…' : 'Bilingual'}
+            {translatingMessageId ? t('translating') : t('bilingual')}
           </button>
         </div>
 
         {contextScope === 'selection' && (
-          <div className="selection-actions" aria-label="Selected text actions">
+          <div className="selection-actions" aria-label={t('selectionActions')}>
             <button
               type="button"
               className="action-chip"
               disabled={running}
               onClick={() => void runSelectionAction('explain')}
             >
-              Explain
+              {t('explain')}
             </button>
             <button
               type="button"
@@ -791,7 +795,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
               disabled={running}
               onClick={() => void runSelectionAction('simplify')}
             >
-              Simplify
+              {t('simplify')}
             </button>
             <button
               type="button"
@@ -799,7 +803,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
               disabled={running}
               onClick={() => void prepareSelectionFollowUp()}
             >
-              Ask follow-up
+              {t('askFollowUp')}
             </button>
             <button
               type="button"
@@ -807,13 +811,13 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
               disabled={running}
               onClick={() => void translateSelection()}
             >
-              Translate
+              {t('translate')}
             </button>
           </div>
         )}
 
         <div className="target-language-row">
-          <label htmlFor="target-language">Translation target</label>
+          <label htmlFor="target-language">{t('translationTarget')}</label>
           <select
             id="target-language"
             value={preferences.targetLanguage}
@@ -844,13 +848,13 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
               }
             }}
             placeholder={scopePlaceholder}
-            aria-label="Message"
+            aria-label={t('message')}
             disabled={running}
             rows={2}
           />
           {running ? (
             <button type="button" className="btn danger" onClick={stop}>
-              Stop
+              {t('stop')}
             </button>
           ) : (
             <button
@@ -859,13 +863,12 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
               disabled={!input.trim()}
               onClick={() => void askPage()}
             >
-              Send
+              {t('send')}
             </button>
           )}
         </div>
         <p className="composer-note">
-          Only {SCOPE_LABELS[contextScope].toLowerCase()} is sent to the selected local
-          provider.
+          {t('localScopeNotice', { scope: SCOPE_LABELS[contextScope] })}
         </p>
       </div>
     </section>

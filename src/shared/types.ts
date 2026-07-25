@@ -1,4 +1,4 @@
-/** Shared domain types for VaultLens */
+/** Shared domain types for VerityRead */
 
 export type ProviderId = 'chrome-builtin' | 'ollama';
 
@@ -113,7 +113,7 @@ export interface TranslateResult {
   translatedText: string;
   detectedLanguage?: string;
   targetLanguage: string;
-  engine: 'chrome-translator' | 'llm-fallback';
+  engine: 'chrome-translator' | 'llm-fallback' | 'identity';
   providerId: ProviderId;
   model: string;
 }
@@ -121,6 +121,7 @@ export interface TranslateResult {
 export type ErrorCode =
   | 'PAGE_PROTECTED'
   | 'PAGE_INACCESSIBLE'
+  | 'PAGE_ACCESS_REQUIRED'
   | 'EXTRACT_QUALITY_LOW'
   | 'CONTENT_TOO_LONG'
   | 'CONTENT_INSUFFICIENT'
@@ -151,6 +152,7 @@ export interface UserPreferences {
   historyEnabled: boolean;
   historyRetentionDays: number;
   onboardingComplete: boolean;
+  privacyConsentVersion: string | null;
   cacheSummaries: boolean;
   readingLevel: ReadingLevel;
 }
@@ -164,9 +166,12 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   historyEnabled: false,
   historyRetentionDays: 7,
   onboardingComplete: false,
-  cacheSummaries: true,
+  privacyConsentVersion: null,
+  cacheSummaries: false,
   readingLevel: 'standard',
 };
+
+export const CURRENT_PRIVACY_CONSENT_VERSION = '2026-07-26';
 
 export const ALLOWED_NETWORK_DESTINATIONS = [
   'chrome-web-store (extension updates)',

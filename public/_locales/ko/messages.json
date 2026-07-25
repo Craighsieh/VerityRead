@@ -1,0 +1,7 @@
+{
+  "extensionName": { "message": "VerityRead" },
+  "extensionDescription": {
+    "message": "정확한 요약, 페이지 질문 및 번역을 제공하는 개인정보 보호 중심 로컬 AI 읽기 도우미입니다."
+  },
+  "actionTitle": { "message": "VerityRead 열기" }
+}

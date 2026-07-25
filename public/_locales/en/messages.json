@@ -1,0 +1,7 @@
+{
+  "extensionName": { "message": "VerityRead" },
+  "extensionDescription": {
+    "message": "Local AI reading assistant for accurate summaries, page questions, and translation—with privacy built in."
+  },
+  "actionTitle": { "message": "Open VerityRead" }
+}

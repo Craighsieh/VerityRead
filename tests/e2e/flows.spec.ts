@@ -1,6 +1,5 @@
 /**
- * Lightweight UI-less flow checks for PRD §7 fixtures / privacy markers.
- * Full extension UI E2E with --load-extension is documented in ALPHA_CHECKLIST.
+ * Lightweight fixture checks that complement the loaded-extension flow suite.
  */
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';

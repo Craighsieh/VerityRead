@@ -1,8 +1,8 @@
-# VaultLens → Codex 交接清单
+# VerityRead → Codex 交接清单
 
 **交接日期：** 2026-07-25  
 **仓库路径：** `/Users/craighsieh/Documents/VaultLens`  
-**产品代号：** VaultLens（隐私优先、本机 AI Chrome 扩展）  
+**正式名称：** VerityRead／真閱（隐私优先、本机 AI Chrome 扩展）
 **当前阶段：** Phase 0 + Phase 1（MVP Alpha）代码骨架与核心功能已落地；真机验收与封闭测试未完成  
 **技术栈：** TypeScript + Vite + CRXJS + React + Manifest V3 + pnpm  
 
@@ -11,10 +11,10 @@
 ## 0. 给 Codex 的开工指令（可直接粘贴）
 
 ```text
-你正在接手 VaultLens（Chrome MV3 扩展）。仓库：/Users/craighsieh/Documents/VaultLens
+你正在接手 VerityRead（Chrome MV3 扩展）。仓库：/Users/craighsieh/Documents/VaultLens
 
 必读（按顺序）：
-1. VaultLens_Local_AI_Browser_PRD_v1.0.md（产品真相来源）
+1. VerityRead_Local_AI_Browser_PRD_v1.0.md（产品真相来源）
 2. docs/HANDOFF_CODEX.md（本交接清单）
 3. docs/ARCHITECTURE.md
 4. docs/THREAT_MODEL.md
@@ -39,7 +39,7 @@ cd /Users/craighsieh/Documents/VaultLens && pnpm install && pnpm pipeline && pnp
 
 ## 1. 项目一句话
 
-VaultLens 让用户在 Chrome Side Panel 里**摘要当前页 / 问页面（带来源回跳）/ 翻译选区**，推理走 **Chrome Built-in AI** 或本机 **Ollama**；默认不把页面内容送给云端推理。
+VerityRead 让用户在 Chrome Side Panel 里**摘要当前页 / 问页面（带来源回跳）/ 翻译选区**，推理走 **Chrome Built-in AI** 或本机 **Ollama**；默认不把页面内容送给云端推理。
 
 ---
 
@@ -52,7 +52,7 @@ VaultLens 让用户在 Chrome Side Panel 里**摘要当前页 / 问页面（带�
 | 单测 | Vitest，约 19 tests |
 | Egress | `pnpm test:egress` |
 | 扩展加载 | `pnpm build` → Chrome 加载 `dist/` |
-| 正式名称/商标/网域 | 未定；继续用代号 VaultLens |
+| 正式名称/商标/网域 | 英文 VerityRead；中文 真閱；商标与网域仍需正式清查 |
 | 付费 / Pro / WebGPU / PDF / LM Studio | **不在当前 MVP 范围** |
 
 ### 关键命令
@@ -79,7 +79,7 @@ pnpm scan:dist
 
 | 文件 | 用途 |
 |---|---|
-| [VaultLens_Local_AI_Browser_PRD_v1.0.md](../VaultLens_Local_AI_Browser_PRD_v1.0.md) | 完整 PRD（范围、验收、隐私、路线图） |
+| [VerityRead_Local_AI_Browser_PRD_v1.0.md](../VerityRead_Local_AI_Browser_PRD_v1.0.md) | 完整 PRD（范围、验收、隐私、路线图） |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | 三上下文、消息流、Provider、存储/网络边界 |
 | [THREAT_MODEL.md](THREAT_MODEL.md) | 数据分类、注入、Ollama、XSS |
 | [PRIVACY_TEST_PLAN.md](PRIVACY_TEST_PLAN.md) | egress / 残留 / 权限 / Offline Lock |
@@ -166,11 +166,11 @@ Web Page --(用户点击)--> Content Script (extract / jump)
 **模型名：** 本机曾出现 `qwen3.6:latest`（约 23GB）；Settings 须填 Ollama 列表里的真实 name。  
 **修复步骤（macOS）：**
 
-1. `chrome://extensions` 开开发者模式 → 复制 VaultLens **ID**  
+1. `chrome://extensions` 开开发者模式 → 复制 VerityRead **ID**
 2. 菜单栏 Quit Ollama  
 3. `launchctl setenv OLLAMA_ORIGINS "chrome-extension://<ID>"`  
 4. 重启 Ollama  
-5. VaultLens → Settings：Provider=Ollama，model=`qwen3.6:latest`（或 `llama3.2:latest` 做链路验证）  
+5. VerityRead → Settings：Provider=Ollama，model=`qwen3.6:latest`（或 `llama3.2:latest` 做链路验证）
 6. Labs → Spike Ollama → `healthy: true`  
 
 大模型首次加载可能要很久；链路验证优先用小模型。

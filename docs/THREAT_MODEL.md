@@ -1,4 +1,4 @@
-# VaultLens Threat Model
+# VerityRead Threat Model
 
 ## Data classification (PRD §9.1)
 
@@ -11,7 +11,7 @@
 | Preferences | Yes | No | `chrome.storage.local` |
 | Model files | Yes | Download source only | No user content |
 | License | Yes | License service only | No page data |
-| Errors | Opt-in | Yes (scrubbed) | Strip content/URL/DOM |
+| Errors | No | No | Displayed locally; no telemetry in version 0.1.0 |
 
 ## Trust boundaries
 
@@ -59,7 +59,8 @@ Threat: extension pointed at remote host → data exfil.
 
 Mitigations:
 
-- Only `127.0.0.1` / `localhost` allowed
+- Only the exact endpoint `http://127.0.0.1:11434` is allowed
+- `localhost`, alternate ports, credentials, paths, LAN addresses, and remote hosts are rejected
 - Health checks never include page content
 - CORS guide prefers extension-origin allowlist
 
@@ -71,16 +72,17 @@ Mitigations:
 
 - MVP permissions: `activeTab`, `scripting`, `storage`, `sidePanel`, `contextMenus`
 - Host permission only for Ollama loopback
-- Extract only after user gesture
+- No static content script; extract only after a user-triggered task
+- Persistent website access is optional, requested for one exact origin, and revocable in Settings
 
-## License / update channels
+## Update and model-download channels
 
-Threat: page data mixed into license/update requests.
+Threat: page data mixed into extension update or model/language-pack download requests.
 
 Mitigations:
 
 - Separate data planes; Offline Lock
-- License payload limited to token/version/platform/install id (future Pro)
+- No account, license service, analytics, or developer backend in version 0.1.0
 - Egress tests assert markers never leave
 
 ## Residual risks

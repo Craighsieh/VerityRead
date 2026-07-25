@@ -5,15 +5,93 @@ import { isProtectedUrl } from '@/core/extract';
 import { clearAllLocalData, getPreferences, setPreferences } from '@/storage';
 import { providerRegistry } from '@/providers/registry';
 import { probeChromeAvailability } from '@/providers/chromeBuiltin';
+import contentScriptFile from '@/content/index.ts?script';
+import { productName, t } from '@/i18n';
 
 const CONTEXT_MENU_ACTIONS = {
-  translate: 'vaultlens-translate-selection',
-  explain: 'vaultlens-explain-selection',
-  simplify: 'vaultlens-simplify-selection',
-  ask: 'vaultlens-ask-selection',
+  translate: 'verityread-translate-selection',
+  explain: 'verityread-explain-selection',
+  simplify: 'verityread-simplify-selection',
+  ask: 'verityread-ask-selection',
 } as const;
 
 type ContextMenuAction = keyof typeof CONTEXT_MENU_ACTIONS;
+
+function originPatternFromUrl(rawUrl?: string): string | null {
+  if (!rawUrl) return null;
+  try {
+    const url = new URL(rawUrl);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+    return `${url.origin}/*`;
+  } catch {
+    return null;
+  }
+}
+
+async function getActiveTab(): Promise<chrome.tabs.Tab | undefined> {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  return tab;
+}
+
+async function ensureContentScript(tabId: number): Promise<void> {
+  const existing = await sendTabMessage(tabId, { type: 'PING', from: 'background' });
+  if (existing?.type === 'PONG') return;
+
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: [contentScriptFile],
+    });
+  } catch (error) {
+    throw createAppError('PAGE_ACCESS_REQUIRED', {
+      cause: error instanceof Error ? error.message : String(error),
+    });
+  }
+
+  const ready = await sendTabMessage(tabId, { type: 'PING', from: 'background' });
+  if (ready?.type !== 'PONG') {
+    throw createAppError('PAGE_INACCESSIBLE', {
+      cause: 'The page reader did not start after permission was granted.',
+    });
+  }
+}
+
+async function siteAccessResult(
+  requestId: string,
+  action?: 'request' | 'remove',
+) {
+  const tab = await getActiveTab();
+  const originPattern = originPatternFromUrl(tab?.url);
+  if (!originPattern) {
+    return {
+      type: 'SITE_ACCESS_RESULT' as const,
+      requestId,
+      hasPersistentAccess: false,
+      canRequest: false,
+      error: createAppError(tab?.url ? 'PAGE_PROTECTED' : 'PAGE_ACCESS_REQUIRED'),
+    };
+  }
+
+  let granted: boolean | undefined;
+  if (action === 'request') {
+    granted = await chrome.permissions.request({ origins: [originPattern] });
+  } else if (action === 'remove') {
+    granted = await chrome.permissions.remove({ origins: [originPattern] });
+  }
+
+  const hasPersistentAccess = await chrome.permissions.contains({
+    origins: [originPattern],
+  });
+  return {
+    type: 'SITE_ACCESS_RESULT' as const,
+    requestId,
+    origin: new URL(tab?.url ?? originPattern).origin,
+    originPattern,
+    hasPersistentAccess,
+    canRequest: true,
+    granted,
+  };
+}
 
 async function setupSidePanel(): Promise<void> {
   if (chrome.sidePanel?.setPanelBehavior) {
@@ -24,10 +102,10 @@ async function setupSidePanel(): Promise<void> {
 function setupContextMenus(): void {
   chrome.contextMenus.removeAll(() => {
     const labels: Record<ContextMenuAction, string> = {
-      translate: '使用 VaultLens 翻译',
-      explain: '使用 VaultLens 解释',
-      simplify: '使用 VaultLens 简化',
-      ask: '使用 VaultLens 追问',
+      translate: t('contextMenuTranslate', { product: productName() }),
+      explain: t('contextMenuExplain', { product: productName() }),
+      simplify: t('contextMenuSimplify', { product: productName() }),
+      ask: t('contextMenuAsk', { product: productName() }),
     };
     for (const [action, id] of Object.entries(CONTEXT_MENU_ACTIONS) as Array<
       [ContextMenuAction, string]
@@ -100,6 +178,15 @@ onMessage(async (message, sender) => {
       };
     }
 
+    case 'GET_SITE_ACCESS':
+      return siteAccessResult(message.requestId);
+
+    case 'REQUEST_SITE_ACCESS':
+      return siteAccessResult(message.requestId, 'request');
+
+    case 'REMOVE_SITE_ACCESS':
+      return siteAccessResult(message.requestId, 'remove');
+
     case 'SET_PREFERENCES': {
       const preferences = await setPreferences(message.preferences);
       if (message.preferences.defaultProviderId) {
@@ -164,7 +251,7 @@ onMessage(async (message, sender) => {
     }
 
     case 'EXTRACT_PAGE': {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const tab = await getActiveTab();
       if (!tab?.id) {
         return {
           type: 'EXTRACT_PAGE_RESULT',
@@ -173,9 +260,8 @@ onMessage(async (message, sender) => {
           error: createAppError('PAGE_INACCESSIBLE'),
         };
       }
-      // Chrome may omit tab.url without the broad `tabs` permission. The
-      // statically registered content script can still serve the request, so
-      // only classify protected pages when the URL is actually available.
+      // Chrome may omit tab.url when neither activeTab nor an exact optional
+      // origin grant is active, so only classify protected pages when present.
       if (tab.url && isProtectedUrl(tab.url)) {
         return {
           type: 'EXTRACT_PAGE_RESULT',
@@ -185,35 +271,41 @@ onMessage(async (message, sender) => {
         };
       }
 
-      // Content script is declared in manifest for http(s). Retry once after ping.
-      let result = await sendTabMessage(tab.id, {
-        type: 'EXTRACT_PAGE',
-        taskId: message.taskId,
-        scope: message.scope,
-        selectionText: message.selectionText,
-      });
-      if (!result) {
-        // activeTab may be needed after user gesture; ping first
-        await sendTabMessage(tab.id, { type: 'PING', from: 'background' });
-        result = await sendTabMessage(tab.id, {
+      try {
+        // Inject only after the user starts a page task. activeTab gives
+        // one-time access; exact optional origin grants support persistent use.
+        await ensureContentScript(tab.id);
+        const result = await sendTabMessage(tab.id, {
           type: 'EXTRACT_PAGE',
           taskId: message.taskId,
           scope: message.scope,
           selectionText: message.selectionText,
         });
-      }
-      return (
-        result ?? {
+        return (
+          result ?? {
+            type: 'EXTRACT_PAGE_RESULT',
+            requestId: message.requestId,
+            taskId: message.taskId,
+            error: createAppError('PAGE_INACCESSIBLE'),
+          }
+        );
+      } catch (error) {
+        return {
           type: 'EXTRACT_PAGE_RESULT',
           requestId: message.requestId,
           taskId: message.taskId,
-          error: createAppError('PAGE_INACCESSIBLE'),
-        }
-      );
+          error:
+            typeof error === 'object' && error !== null && 'code' in error
+              ? (error as ReturnType<typeof createAppError>)
+              : createAppError('PAGE_ACCESS_REQUIRED', {
+                  cause: error instanceof Error ? error.message : String(error),
+                }),
+        };
+      }
     }
 
     case 'JUMP_TO_SOURCE': {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const tab = await getActiveTab();
       if (!tab?.id) {
         return {
           type: 'JUMP_TO_SOURCE_RESULT',
@@ -222,6 +314,7 @@ onMessage(async (message, sender) => {
           error: createAppError('PAGE_INACCESSIBLE'),
         };
       }
+      await ensureContentScript(tab.id);
       const result = await sendTabMessage(tab.id, {
         type: 'JUMP_TO_SOURCE',
         sourceBlockId: message.sourceBlockId,
@@ -237,8 +330,17 @@ onMessage(async (message, sender) => {
     }
 
     case 'GET_SELECTION': {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const tab = await getActiveTab();
       if (!tab?.id) {
+        return {
+          type: 'GET_SELECTION_RESULT',
+          requestId: message.requestId,
+          text: '',
+        };
+      }
+      try {
+        await ensureContentScript(tab.id);
+      } catch {
         return {
           type: 'GET_SELECTION_RESULT',
           requestId: message.requestId,
