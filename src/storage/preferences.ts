@@ -37,10 +37,22 @@ async function migrateLegacyStorage(): Promise<void> {
   const legacyPreferences = current[LEGACY_PREF_KEY] as
     | Partial<UserPreferences>
     | undefined;
-  const migratedPreferences = {
+  const combinedPreferences = {
     ...DEFAULT_PREFERENCES,
     ...legacyPreferences,
     ...currentPreferences,
+  };
+  const privacyConsentVersion =
+    combinedPreferences.privacyConsentVersion === CURRENT_PRIVACY_CONSENT_VERSION
+      ? CURRENT_PRIVACY_CONSENT_VERSION
+      : null;
+  const migratedPreferences = {
+    ...combinedPreferences,
+    // Persist the consent gate instead of relying only on the derived read
+    // value, so every extension context observes the same safe state.
+    privacyConsentVersion,
+    onboardingComplete:
+      combinedPreferences.onboardingComplete && privacyConsentVersion !== null,
     // Version 0.1.0 changes summary persistence from opt-out to opt-in.
     cacheSummaries: false,
     // Custom endpoints are intentionally deferred; migration closes the older

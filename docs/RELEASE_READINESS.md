@@ -62,7 +62,7 @@ completed.
 - Production extension directory: `dist/`
 - Upload ZIP: `release/verityread-0.1.0.zip`
 - Upload ZIP SHA-256:
-  `68f4ea83ccfd980026d0ae2f4c2aee630525704bf91fee9d219b8e697c28d3b6`
+  `7c066255372deb1cc75efb64a015733e3e0dfe219836bfae3e70178bb93d02e9`
 - Store assets: `assets/store/`
 - Store listing source: `docs/store/LISTING.md`
 - Privacy-practices source: `docs/store/PRIVACY_PRACTICES.md`

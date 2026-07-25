@@ -45,9 +45,9 @@ test('requires explicit privacy consent before capability setup', async ({
 test('migrates legacy preferences to opt-in cache and fixed loopback', async ({
   page,
   extensionId,
+  serviceWorker,
 }) => {
-  await page.goto(`chrome-extension://${extensionId}/src/sidepanel/index.html`);
-  await page.evaluate(async () => {
+  await serviceWorker.evaluate(async () => {
     await chrome.storage.local.clear();
     await chrome.storage.local.set({
       'vaultlens.preferences': {
@@ -57,7 +57,8 @@ test('migrates legacy preferences to opt-in cache and fixed loopback', async ({
       },
     });
   });
-  await page.reload();
+
+  await page.goto(`chrome-extension://${extensionId}/src/sidepanel/index.html`);
   await expect(page.getByRole('heading', { name: 'Welcome to VerityRead' })).toBeVisible();
 
   const preferences = await page.evaluate(async () => {
