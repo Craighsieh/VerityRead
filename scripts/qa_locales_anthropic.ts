@@ -1,12 +1,13 @@
 /**
  * Development-only Japanese/Korean language QA through Anthropic.
  *
- * Sends only public UI/listing/privacy copy. It is not bundled into the
+ * Sends only public UI/listing/privacy/setup copy. It is not bundled into the
  * extension and never receives user page content.
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { messageKeys, t, type SupportedLocale } from '@/i18n';
+import { OLLAMA_STARTER_MODELS } from '@/providers/modelRecommendation';
 
 interface AnthropicTextBlock {
   type: 'text';
@@ -56,7 +57,7 @@ const QA_OUTPUT_SCHEMA = {
         properties: {
           source: {
             type: 'string',
-            enum: ['runtime', 'manifest', 'storeListing', 'privacyPolicy'],
+            enum: ['runtime', 'manifest', 'storeListing', 'privacyPolicy', 'setupGuide'],
           },
           key: {
             type: 'string',
@@ -70,14 +71,7 @@ const QA_OUTPUT_SCHEMA = {
           suggested: { type: 'string' },
           reason: { type: 'string' },
         },
-        required: [
-          'source',
-          'key',
-          'severity',
-          'current',
-          'suggested',
-          'reason',
-        ],
+        required: ['source', 'key', 'severity', 'current', 'suggested', 'reason'],
         additionalProperties: false,
       },
     },
@@ -112,10 +106,11 @@ function runtimeCopy(locale: SupportedLocale): Record<string, string> {
 
 async function sourceBundle(locale: 'ja' | 'ko'): Promise<Record<string, unknown>> {
   const privacyFilename = locale === 'ja' ? 'ja.md' : 'ko.md';
-  const [manifest, listing, privacy] = await Promise.all([
+  const [manifest, listing, privacy, setupGuide] = await Promise.all([
     readFile(resolve(ROOT, `public/_locales/${locale}/messages.json`), 'utf8'),
     readFile(resolve(ROOT, 'docs/store/LISTING.md'), 'utf8'),
     readFile(resolve(ROOT, `docs/privacy/${privacyFilename}`), 'utf8'),
+    readFile(resolve(ROOT, `docs/setup/${privacyFilename}`), 'utf8'),
   ]);
   const listingHeading = locale === 'ja' ? '## 日本語 (`ja`)' : '## 한국어 (`ko`)';
   const listingStart = listing.indexOf(listingHeading);
@@ -124,6 +119,11 @@ async function sourceBundle(locale: 'ja' | 'ko'): Promise<Record<string, unknown
 
   return {
     locale,
+    setupFacts: {
+      checkedAt: '2026-07-26',
+      source: 'https://ollama.com/library/gemma4',
+      models: OLLAMA_STARTER_MODELS,
+    },
     runtime: runtimeCopy(locale),
     manifest: JSON.parse(manifest),
     storeListing: listing.slice(
@@ -131,6 +131,7 @@ async function sourceBundle(locale: 'ja' | 'ko'): Promise<Record<string, unknown
       listingEnd < 0 ? listing.length : listingEnd,
     ),
     privacyPolicy: privacy,
+    setupGuide,
   };
 }
 
@@ -159,10 +160,11 @@ async function reviewLocale(
       },
       system:
         `You are a senior native ${language} product localization reviewer. ` +
-        'Review Chrome-extension UI, store listing, and privacy copy for grammar, naturalness, clarity, consistent terminology, and product-policy accuracy. ' +
+        'Review Chrome-extension UI, store listing, privacy copy, and setup instructions for grammar, naturalness, clarity, consistent terminology, and product-policy accuracy. ' +
         'Use blocker only for dangerous or unusable copy. Use major only when copy materially changes meaning, misrepresents privacy or product capabilities, or prevents a user from completing a task. ' +
         'Classify tone, word order, terminology refinement, and non-blocking ambiguity as minor. Do not report strings that need no change. ' +
         'Do not translate product names, API names, Provider, Chrome Built-in AI, Ollama, URLs, code, or {placeholder} tokens. ' +
+        'Treat setupFacts as the source of truth for starter model names and sizes; runtime {size} placeholders are populated from those same values. ' +
         'Treat this as AI-assisted linguistic QA, not legal advice.',
       messages: [
         {

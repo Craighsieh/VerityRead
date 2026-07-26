@@ -21,6 +21,8 @@ const ALLOWED_PROGRAMMATIC_ENDPOINT_PATTERNS = [
 // destinations and must remain separate from the programmatic endpoint list.
 const ALLOWED_NAVIGATION_URLS = new Set([
   'https://craighsieh.github.io/VerityRead/privacy/',
+  'https://craighsieh.github.io/VerityRead/setup/',
+  'https://ollama.com/download',
 ]);
 
 const FORBIDDEN_PATTERNS: Array<{ name: string; re: RegExp }> = [

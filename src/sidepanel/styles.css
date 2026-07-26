@@ -640,6 +640,28 @@ select:focus-visible {
   flex: 0 0 auto;
 }
 
+.setup-callout {
+  border-left: 3px solid var(--accent);
+  padding: 7px 10px;
+  background: var(--accent-soft);
+  border-radius: 0 8px 8px 0;
+}
+
+.setup-guide .command-option {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.setup-guide .command-option code {
+  display: block;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  user-select: all;
+}
+
 .btn {
   border: 1px solid var(--border);
   background: var(--bg-soft);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   getOllamaModelDescriptors,
+  isOllamaModelReady,
   modelChoiceLabel,
   parseParameterBillions,
   recommendOllamaModel,
@@ -54,5 +55,18 @@ describe('Ollama model recommendation', () => {
 
   it('parses expert-size model tags', () => {
     expect(parseParameterBillions({ name: 'gemma4:e4b' })).toBe(4);
+  });
+
+  it('does not reuse a healthy result for a newly selected model', () => {
+    const status: ProviderStatus = {
+      id: 'ollama',
+      displayName: 'Ollama',
+      healthy: true,
+      availability: 'available',
+      model: 'gemma4:e4b',
+    };
+
+    expect(isOllamaModelReady(status, 'gemma4:e4b')).toBe(true);
+    expect(isOllamaModelReady(status, 'gemma4:e2b')).toBe(false);
   });
 });

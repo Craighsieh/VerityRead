@@ -2,6 +2,7 @@ import { createAppError } from '@/shared/errors';
 import type { ProviderStatus } from '@/shared/types';
 import { ErrorBox } from './ErrorBox';
 import { t, type MessageKey } from '@/i18n';
+import { OllamaSetupGuide, OllamaSetupLink } from './OllamaSetupGuide';
 
 type Platform = 'macos' | 'windows' | 'linux';
 
@@ -81,7 +82,7 @@ export function OllamaStatusCard({
     platform === 'macos'
       ? `launchctl setenv OLLAMA_ORIGINS "chrome-extension://${runtimeId}"`
       : platform === 'windows'
-        ? `OLLAMA_ORIGINS=chrome-extension://${runtimeId}`
+        ? `setx OLLAMA_ORIGINS "chrome-extension://${runtimeId}"`
         : `export OLLAMA_ORIGINS="chrome-extension://${runtimeId}"`;
 
   return (
@@ -95,7 +96,12 @@ export function OllamaStatusCard({
           <span className="muted">
             {t('extensionId')}: <code>{runtimeId}</code>
           </span>
+          <OllamaSetupLink />
         </div>
+      )}
+      {(status.errorCode === 'OLLAMA_UNREACHABLE' ||
+        (status.errorCode === 'MODEL_UNAVAILABLE' && models.length === 0)) && (
+        <OllamaSetupGuide />
       )}
       {models.length > 0 && (
         <div className="connection-status">

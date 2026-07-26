@@ -25,7 +25,8 @@ const en = {
   chromeSummarizerReady: 'Chrome summarizer ready; generating…',
   loadingOllamaModel: 'Connecting to Ollama and loading {model}…',
   ollamaFirstToken: 'Ollama loaded {model}; waiting for the first token…',
-  noSectionSummary: 'The local model returned no content for section {current} of {total}.',
+  noSectionSummary:
+    'The local model returned no content for section {current} of {total}.',
   noSummaryText: 'The local model completed without returning summary text.',
   noAnswerText: 'The local model completed without returning answer text.',
   noTranslationText: 'The local model completed without returning translated text.',
@@ -53,6 +54,18 @@ const en = {
   chooseDefaultProvider: 'Choose default Provider',
   providerChoiceBody:
     'The active Provider is always visible. VerityRead never switches without your action.',
+  ollamaOptionalTitle: 'Ollama is optional',
+  ollamaOptionalBody:
+    'Install Ollama only when Chrome Built-in AI is unavailable or you prefer a specific local model.',
+  ollamaSetupGuide: 'Open the step-by-step Ollama setup guide',
+  installOllamaAndModel: 'Install Ollama and a local model',
+  downloadOllama: 'Download Ollama from the official website',
+  qualityModelLabel: 'Quality-first (recommended, about {size} GB)',
+  lighterModelLabel: 'Smaller download (about {size} GB)',
+  modelDownloadNotice:
+    'Model downloads use the network and disk space; page content is never included.',
+  afterInstallRecheck:
+    'After Ollama restarts and the model download finishes, choose Re-check.',
   modelName: 'Model name',
   chooseInstalledModel: 'Choose an installed model',
   notInstalled: 'not installed',
@@ -195,8 +208,7 @@ const en = {
   ollamaModelNotInstalled: 'The selected model “{model}” is not installed.',
   ollamaHttpError: 'Ollama returned HTTP {status}.',
   corsSetup: 'CORS setup ({platform})',
-  corsMacSteps:
-    'Quit Ollama, run the command below in Terminal, then restart Ollama.',
+  corsMacSteps: 'Quit Ollama, run the command below in Terminal, then restart Ollama.',
   corsWindowsSteps:
     'Quit Ollama, set the user environment variable below, then restart Ollama.',
   corsLinuxSteps:
@@ -261,6 +273,16 @@ const zhTW: LocaleMessages = {
   chooseProvider: '選擇 Provider',
   chooseDefaultProvider: '選擇預設 Provider',
   providerChoiceBody: '目前使用的 Provider 會一直顯示；真閱不會自行切換。',
+  ollamaOptionalTitle: 'Ollama 是選用路徑',
+  ollamaOptionalBody:
+    '只有在 Chrome 裝置端 AI 無法使用，或你偏好指定本機模型時，才需要安裝 Ollama。',
+  ollamaSetupGuide: '查看 Ollama 分步安裝指南',
+  installOllamaAndModel: '安裝 Ollama 與本機模型',
+  downloadOllama: '前往官方網站下載 Ollama',
+  qualityModelLabel: '品質優先（建議，約 {size} GB）',
+  lighterModelLabel: '較小下載（約 {size} GB）',
+  modelDownloadNotice: '模型下載會使用網路與磁碟空間；不會包含頁面內容。',
+  afterInstallRecheck: 'Ollama 重啟且模型下載完成後，請按「重新檢查」。',
   modelName: '模型名稱',
   chooseInstalledModel: '選擇已安裝的模型',
   notInstalled: '尚未安裝',
@@ -268,7 +290,8 @@ const zhTW: LocaleMessages = {
   modelRecommendationReason: '依模型大小與裝置可用記憶體選出的平衡本地閱讀方案。',
   useRecommended: '使用建議模型',
   connectionTest: '連線測試',
-  setupNeedsReady: '所選 Provider 顯示「已就緒」後才能完成設定。請重新檢查或改選另一個本地 Provider。',
+  setupNeedsReady:
+    '所選 Provider 顯示「已就緒」後才能完成設定。請重新檢查或改選另一個本地 Provider。',
   finishSetup: '完成設定',
   setupComplete: '設定完成。請開啟一般網頁並試用「摘要」。',
   available: '可使用',
@@ -321,7 +344,8 @@ const zhTW: LocaleMessages = {
   privacyReceipt: '隱私收據',
   workingLocally: '正在本地處理…',
   localModelProgress: '本地模型進度',
-  slowTask: '首次本地回應可能因載入模型而較慢。你可以繼續等待，或停止後改用較短回答重試。',
+  slowTask:
+    '首次本地回應可能因載入模型而較慢。你可以繼續等待，或停止後改用較短回答重試。',
   recoveryOptions: '復原選項',
   retry: '重試',
   shorterAnswer: '改用較短回答',
@@ -449,6 +473,16 @@ const zhCN: LocaleMessages = {
   chooseProvider: '选择 Provider',
   chooseDefaultProvider: '选择默认 Provider',
   providerChoiceBody: '当前 Provider 会一直显示；真阅不会自行切换。',
+  ollamaOptionalTitle: 'Ollama 是可选路径',
+  ollamaOptionalBody:
+    '只有在 Chrome 设备端 AI 不可用，或你希望使用指定本地模型时，才需要安装 Ollama。',
+  ollamaSetupGuide: '查看 Ollama 分步安装指南',
+  installOllamaAndModel: '安装 Ollama 和本地模型',
+  downloadOllama: '前往官方网站下载 Ollama',
+  qualityModelLabel: '质量优先（推荐，约 {size} GB）',
+  lighterModelLabel: '较小下载（约 {size} GB）',
+  modelDownloadNotice: '模型下载会使用网络和磁盘空间；不会包含页面内容。',
+  afterInstallRecheck: 'Ollama 重启且模型下载完成后，请点击“重新检查”。',
   modelName: '模型名称',
   chooseInstalledModel: '选择已安装的模型',
   notInstalled: '尚未安装',
@@ -456,7 +490,8 @@ const zhCN: LocaleMessages = {
   modelRecommendationReason: '根据模型大小与设备可用内存选择的均衡本地阅读方案。',
   useRecommended: '使用推荐模型',
   connectionTest: '连接测试',
-  setupNeedsReady: '所选 Provider 显示“已就绪”后才能完成设置。请重新检查或改选另一个本地 Provider。',
+  setupNeedsReady:
+    '所选 Provider 显示“已就绪”后才能完成设置。请重新检查或改选另一个本地 Provider。',
   finishSetup: '完成设置',
   setupComplete: '设置完成。请打开普通网页并试用“摘要”。',
   available: '可用',
@@ -509,7 +544,8 @@ const zhCN: LocaleMessages = {
   privacyReceipt: '隐私收据',
   workingLocally: '正在本地处理…',
   localModelProgress: '本地模型进度',
-  slowTask: '首次本地响应可能因加载模型而较慢。你可以继续等待，或停止后改用较短回答重试。',
+  slowTask:
+    '首次本地响应可能因加载模型而较慢。你可以继续等待，或停止后改用较短回答重试。',
   recoveryOptions: '恢复选项',
   retry: '重试',
   shorterAnswer: '改用较短回答',
@@ -556,7 +592,8 @@ const zhCN: LocaleMessages = {
   clearAll: '清除所有本地数据',
   cleared: '已清除：{scope}',
   currentSiteAccess: '当前网站访问权限',
-  siteAccessBody: '点击工具栏图标会授予单次访问权限。持续访问为可选项，且仅限下方所列的确切网站。',
+  siteAccessBody:
+    '点击工具栏图标会授予单次访问权限。持续访问为可选项，且仅限下方所列的确切网站。',
   persistentAccess: '持续访问权限',
   allowed: '已允许',
   notAllowed: '未允许',
@@ -615,28 +652,47 @@ const ja: LocaleMessages = {
   chromeSummarizerReady: 'Chromeの要約モデルの準備が完了しました。生成中…',
   loadingOllamaModel: 'Ollamaに接続して{model}を読み込み中…',
   ollamaFirstToken: 'Ollamaが{model}を読み込みました。最初のトークンを待機中…',
-  noSectionSummary: 'ローカルモデルからセクション{current}／{total}の内容が返されませんでした。',
+  noSectionSummary:
+    'ローカルモデルからセクション{current}／{total}の内容が返されませんでした。',
   noSummaryText: 'ローカルモデルは処理を完了しましたが、要約テキストを返しませんでした。',
   noAnswerText: 'ローカルモデルは処理を完了しましたが、回答テキストを返しませんでした。',
-  noTranslationText: 'ローカルモデルは処理を完了しましたが、翻訳テキストを返しませんでした。',
+  noTranslationText:
+    'ローカルモデルは処理を完了しましたが、翻訳テキストを返しませんでした。',
   pageContentStaysLocal: 'ページ内容は端末内に保持',
   diagnostics: '診断（Labs）',
   cloudInferenceFalse: 'クラウド推論：なし',
   welcomeTitle: 'VerityReadへようこそ',
   welcomeBody: '正確な要約とプライバシー保護を備えた、ローカルAI読書アシスタントです。',
   privacyPromise: '検証可能なプライバシー保護',
-  privacyPromiseOne: 'ページ内容、選択テキスト、プロンプト、AI回答をクラウド推論サービスへ送信しません。',
-  privacyPromiseTwo: 'モデルのダウンロードと拡張機能の更新はネットワークを使用する場合がありますが、ページデータとは分離されます。',
+  privacyPromiseOne:
+    'ページ内容、選択テキスト、プロンプト、AI回答をクラウド推論サービスへ送信しません。',
+  privacyPromiseTwo:
+    'モデルのダウンロードと拡張機能の更新はネットワークを使用する場合がありますが、ページデータとは分離されます。',
   privacyPromiseThree: '操作を選択した後にのみ、現在のタブの内容を読み取ります。',
-  privacyConsent: '選択した機能を提供するため、VerityReadがこの端末上で選択したページ内容を処理することに同意します。',
+  privacyConsent:
+    '選択した機能を提供するため、VerityReadがこの端末上で選択したページ内容を処理することに同意します。',
   privacyPolicy: 'プライバシーポリシーを読む',
   runCapabilityCheck: '端末の対応状況を確認',
   deviceCapabilityCheck: '端末の対応状況',
-  capabilityCheckBody: 'この確認では現在のページを読み取りません。ダウンロード状態は後で更新される場合があります。',
+  capabilityCheckBody:
+    'この確認では現在のページを読み取りません。ダウンロード状態は後で更新される場合があります。',
   recheck: '再確認',
   chooseProvider: 'Providerを選択',
   chooseDefaultProvider: '既定のProviderを選択',
-  providerChoiceBody: '使用中のProviderは常に表示されます。VerityReadが自動で切り替えることはありません。',
+  providerChoiceBody:
+    '使用中のProviderは常に表示されます。VerityReadが自動で切り替えることはありません。',
+  ollamaOptionalTitle: 'Ollamaは任意です',
+  ollamaOptionalBody:
+    'ChromeのオンデバイスAIが利用できない場合、または特定のローカルモデルを使いたい場合にのみ、Ollamaをインストールしてください。',
+  ollamaSetupGuide: 'Ollamaの手順別セットアップガイドを開く',
+  installOllamaAndModel: 'Ollamaとローカルモデルをインストール',
+  downloadOllama: '公式サイトからOllamaをダウンロード',
+  qualityModelLabel: '品質優先（推奨、約{size} GB）',
+  lighterModelLabel: 'ダウンロード容量が小さいモデル（約{size} GB）',
+  modelDownloadNotice:
+    'モデルのダウンロードにはネットワークとディスク容量を使用しますが、ページ内容は含まれません。',
+  afterInstallRecheck:
+    'Ollamaを再起動してモデルのダウンロードが完了したら、「再確認」を選択してください。',
   modelName: 'モデル名',
   chooseInstalledModel: 'インストール済みモデルを選択',
   notInstalled: '未インストール',
@@ -645,16 +701,19 @@ const ja: LocaleMessages = {
     'モデルサイズと端末の利用可能メモリに基づいた、ローカル読書に適したバランスの良い選択です。',
   useRecommended: '推奨モデルを使用',
   connectionTest: '接続テスト',
-  setupNeedsReady: '選択したProviderが「準備完了」になると設定を完了できます。再確認するか、別のローカルProviderを選択してください。',
+  setupNeedsReady:
+    '選択したProviderが「準備完了」になると設定を完了できます。再確認するか、別のローカルProviderを選択してください。',
   finishSetup: '設定を完了',
-  setupComplete: '設定が完了しました。通常のウェブページを開き、「要約」をお試しください。',
+  setupComplete:
+    '設定が完了しました。通常のウェブページを開き、「要約」をお試しください。',
   available: '利用可能',
   downloadable: 'ダウンロード可能',
   downloading: 'ダウンロード中',
   unknown: '不明',
   presentDisplayOnly: '検出済み（現バージョンでは表示のみで、選択には利用できません）',
   missing: '未検出',
-  welcomeChat: '現在のページについて質問するか、下の操作を選んでください。送信後、選択した範囲だけを読み取ります。',
+  welcomeChat:
+    '現在のページについて質問するか、下の操作を選んでください。送信後、選択した範囲だけを読み取ります。',
   summary: '要約',
   keyPoints: '要点',
   outline: 'アウトライン',
@@ -673,12 +732,15 @@ const ja: LocaleMessages = {
   readingSection: '現在のセクションを読み取り中…',
   readingPage: '現在のページを読み取り中…',
   findingPassages: '関連箇所を検索中…',
-  pageChanged: 'ページが「{title}」に変わりました。新しいリクエストはこのページを使用します。以前の出典リンクは正しく移動できない場合があります。',
+  pageChanged:
+    'ページが「{title}」に変わりました。新しいリクエストはこのページを使用します。以前の出典リンクは正しく移動できない場合があります。',
   noSelection: '現在のページでテキストが選択されていません。',
   noSelectionImpact: 'この操作には選択したページテキストが必要です。',
   noSelectionStep: 'ページ上の文章を選択して、もう一度お試しください。',
-  simplifyInstruction: '意味を変えたり事実を追加したりせず、選択テキストを平易な表現に書き換えてください。',
-  explainInstruction: '選択テキストを文脈に沿って説明し、難しい用語を定義して著者の意図を保ってください。',
+  simplifyInstruction:
+    '意味を変えたり事実を追加したりせず、選択テキストを平易な表現に書き換えてください。',
+  explainInstruction:
+    '選択テキストを文脈に沿って説明し、難しい用語を定義して著者の意図を保ってください。',
   simplifyRequest: '選択テキストを簡単にしてください。',
   explainRequest: '選択テキストを説明してください。',
   translateSelectionRequest: '選択テキストを{language}に翻訳してください。',
@@ -699,7 +761,8 @@ const ja: LocaleMessages = {
   privacyReceipt: 'プライバシー記録',
   workingLocally: '端末内で処理中…',
   localModelProgress: 'ローカルモデルの進行状況',
-  slowTask: '最初の応答はモデルの読み込みに時間がかかる場合があります。待つか、停止して短い回答で再試行できます。',
+  slowTask:
+    '最初の応答はモデルの読み込みに時間がかかる場合があります。待つか、停止して短い回答で再試行できます。',
   recoveryOptions: '復旧オプション',
   retry: '再試行',
   shorterAnswer: '短い回答で再試行',
@@ -730,7 +793,8 @@ const ja: LocaleMessages = {
   receiptCloud: 'ページ内容のクラウド推論サービスへの送信',
   receiptDestinations: '許可された送信先',
   privacyCenter: 'プライバシーセンター',
-  privacyCenterBody: 'データの行き先を確認できます。ページ内容はダウンロード、ライセンス、更新リクエストに含まれません。',
+  privacyCenterBody:
+    'データの行き先を確認できます。ページ内容はダウンロード、ライセンス、更新リクエストに含まれません。',
   defaultProvider: '既定のProvider',
   offlineLock: 'オフラインロック',
   history: '履歴',
@@ -747,7 +811,8 @@ const ja: LocaleMessages = {
   clearAll: 'すべてのローカルデータを消去',
   cleared: '消去済み：{scope}',
   currentSiteAccess: '現在のサイトへのアクセス',
-  siteAccessBody: 'ツールバーアイコンをクリックすると1回限りのアクセスが許可されます。継続アクセスは任意で、下記のサイトだけに限定されます。',
+  siteAccessBody:
+    'ツールバーアイコンをクリックすると1回限りのアクセスが許可されます。継続アクセスは任意で、下記のサイトだけに限定されます。',
   persistentAccess: '継続アクセス',
   allowed: '許可済み',
   notAllowed: '未許可',
@@ -770,9 +835,12 @@ const ja: LocaleMessages = {
   ollamaModelNotInstalled: '選択したモデル「{model}」はインストールされていません。',
   ollamaHttpError: 'OllamaからHTTP {status}が返されました。',
   corsSetup: 'CORS設定（{platform}）',
-  corsMacSteps: 'Ollamaを終了し、ターミナルで以下のコマンドを実行してから、Ollamaを再起動してください。',
-  corsWindowsSteps: 'Ollamaを終了し、以下のユーザー環境変数を設定してから、Ollamaを再起動してください。',
-  corsLinuxSteps: 'Ollamaを停止し、サービスの起動前に以下の環境変数を設定してから、Ollamaを再起動してください。',
+  corsMacSteps:
+    'Ollamaを終了し、ターミナルで以下のコマンドを実行してから、Ollamaを再起動してください。',
+  corsWindowsSteps:
+    'Ollamaを終了し、以下のユーザー環境変数を設定してから、Ollamaを再起動してください。',
+  corsLinuxSteps:
+    'Ollamaを停止し、サービスの起動前に以下の環境変数を設定してから、Ollamaを再起動してください。',
   extensionId: '拡張機能ID',
   selectedModel: '選択中のモデル：{model}',
   installedModels: 'インストール済み：{models}',
@@ -807,7 +875,8 @@ const ko: LocaleMessages = {
   chromeSummarizerReady: 'Chrome 요약 모델 준비 완료. 생성 중…',
   loadingOllamaModel: 'Ollama에 연결하여 {model} 로드 중…',
   ollamaFirstToken: 'Ollama가 {model} 모델을 로드했습니다. 첫 토큰 대기 중…',
-  noSectionSummary: '로컬 모델이 {total}개 중 {current}번째 섹션의 내용을 반환하지 않았습니다.',
+  noSectionSummary:
+    '로컬 모델이 {total}개 중 {current}번째 섹션의 내용을 반환하지 않았습니다.',
   noSummaryText: '로컬 모델이 처리를 완료했지만 요약 텍스트를 반환하지 않았습니다.',
   noAnswerText: '로컬 모델이 처리를 완료했지만 답변 텍스트를 반환하지 않았습니다.',
   noTranslationText: '로컬 모델이 처리를 완료했지만 번역 텍스트를 반환하지 않았습니다.',
@@ -817,27 +886,45 @@ const ko: LocaleMessages = {
   welcomeTitle: 'VerityRead에 오신 것을 환영합니다',
   welcomeBody: '정확한 요약과 개인정보 보호를 제공하는 로컬 AI 읽기 도우미입니다.',
   privacyPromise: '검증 가능한 개인정보 보호 약속',
-  privacyPromiseOne: '페이지 내용, 선택한 텍스트, 프롬프트 및 AI 답변을 클라우드 추론 서비스로 보내지 않습니다.',
-  privacyPromiseTwo: '모델 다운로드와 확장 프로그램 업데이트에는 네트워크가 사용될 수 있지만 페이지 데이터와 분리됩니다.',
+  privacyPromiseOne:
+    '페이지 내용, 선택한 텍스트, 프롬프트 및 AI 답변을 클라우드 추론 서비스로 보내지 않습니다.',
+  privacyPromiseTwo:
+    '모델 다운로드와 확장 프로그램 업데이트에는 네트워크가 사용될 수 있지만 페이지 데이터와 분리됩니다.',
   privacyPromiseThree: '사용자가 작업을 선택한 후에만 현재 탭을 읽습니다.',
   privacyConsent:
     '요청한 기능을 제공하기 위해 VerityRead가 이 기기에서 제가 선택한 페이지 내용을 처리하는 데 동의합니다.',
   privacyPolicy: '개인정보 처리방침 보기',
   runCapabilityCheck: '기기 기능 확인',
   deviceCapabilityCheck: '기기 기능 확인',
-  capabilityCheckBody: '이 확인 과정에서는 현재 페이지를 읽지 않습니다. 다운로드 상태는 나중에 변경될 수 있습니다.',
+  capabilityCheckBody:
+    '이 확인 과정에서는 현재 페이지를 읽지 않습니다. 다운로드 상태는 나중에 변경될 수 있습니다.',
   recheck: '다시 확인',
   chooseProvider: 'Provider 선택',
   chooseDefaultProvider: '기본 Provider 선택',
-  providerChoiceBody: '사용 중인 Provider는 항상 표시되며 VerityRead가 자동으로 전환하지 않습니다.',
+  providerChoiceBody:
+    '사용 중인 Provider는 항상 표시되며 VerityRead가 자동으로 전환하지 않습니다.',
+  ollamaOptionalTitle: 'Ollama는 선택 사항입니다',
+  ollamaOptionalBody:
+    'Chrome 온디바이스 AI를 사용할 수 없거나 특정 로컬 모델을 사용하려는 경우에만 Ollama를 설치하세요.',
+  ollamaSetupGuide: '단계별 Ollama 설정 가이드 열기',
+  installOllamaAndModel: 'Ollama 및 로컬 모델 설치',
+  downloadOllama: '공식 웹사이트에서 Ollama 다운로드',
+  qualityModelLabel: '품질 우선(권장, 약 {size}GB)',
+  lighterModelLabel: '더 작은 다운로드(약 {size}GB)',
+  modelDownloadNotice:
+    '모델 다운로드에는 네트워크와 디스크 공간이 사용되지만 페이지 내용은 포함되지 않습니다.',
+  afterInstallRecheck:
+    'Ollama를 다시 시작하고 모델 다운로드가 완료되면 다시 확인을 선택하세요.',
   modelName: '모델 이름',
   chooseInstalledModel: '설치된 모델 선택',
   notInstalled: '설치되지 않음',
   recommended: '권장: {model}',
-  modelRecommendationReason: '모델 크기와 기기의 사용 가능한 메모리를 고려한 균형 잡힌 로컬 읽기 선택입니다.',
+  modelRecommendationReason:
+    '모델 크기와 기기의 사용 가능한 메모리를 고려한 균형 잡힌 로컬 읽기 선택입니다.',
   useRecommended: '권장 모델 사용',
   connectionTest: '연결 테스트',
-  setupNeedsReady: '선택한 Provider가 준비 상태가 되면 설정을 완료할 수 있습니다. 다시 확인하거나 다른 로컬 Provider를 선택하세요.',
+  setupNeedsReady:
+    '선택한 Provider가 준비 상태가 되면 설정을 완료할 수 있습니다. 다시 확인하거나 다른 로컬 Provider를 선택하세요.',
   finishSetup: '설정 완료',
   setupComplete: '설정이 완료되었습니다. 일반 웹페이지를 열고 요약 기능을 사용해 보세요.',
   available: '사용 가능',
@@ -871,8 +958,10 @@ const ko: LocaleMessages = {
   noSelection: '현재 페이지에서 선택한 텍스트가 없습니다.',
   noSelectionImpact: '이 작업에는 선택한 페이지 텍스트가 필요합니다.',
   noSelectionStep: '페이지에서 문장을 선택한 후 다시 시도하세요.',
-  simplifyInstruction: '의미를 바꾸거나 사실을 추가하지 않고 선택한 텍스트를 쉬운 표현으로 다시 작성하세요.',
-  explainInstruction: '선택한 텍스트를 맥락에 맞게 설명하고 낯선 용어를 정의하며 작성자의 의미를 유지하세요.',
+  simplifyInstruction:
+    '의미를 바꾸거나 사실을 추가하지 않고 선택한 텍스트를 쉬운 표현으로 다시 작성하세요.',
+  explainInstruction:
+    '선택한 텍스트를 맥락에 맞게 설명하고 낯선 용어를 정의하며 작성자의 의미를 유지하세요.',
   simplifyRequest: '선택한 텍스트를 쉽게 바꿔 주세요.',
   explainRequest: '선택한 텍스트를 설명해 주세요.',
   translateSelectionRequest: '선택한 텍스트를 {language}(으)로 번역해 주세요.',
@@ -893,7 +982,8 @@ const ko: LocaleMessages = {
   privacyReceipt: '개인정보 처리 기록',
   workingLocally: '기기에서 처리 중…',
   localModelProgress: '로컬 모델 진행 상황',
-  slowTask: '처음에는 모델을 불러오느라 응답이 늦을 수 있습니다. 계속 기다리거나 중지한 뒤 짧은 답변으로 다시 시도하세요.',
+  slowTask:
+    '처음에는 모델을 불러오느라 응답이 늦을 수 있습니다. 계속 기다리거나 중지한 뒤 짧은 답변으로 다시 시도하세요.',
   recoveryOptions: '복구 옵션',
   retry: '다시 시도',
   shorterAnswer: '짧은 답변으로 시도',
@@ -924,15 +1014,15 @@ const ko: LocaleMessages = {
   receiptCloud: '페이지 내용의 클라우드 추론 서비스 전송 여부',
   receiptDestinations: '허용된 네트워크 대상',
   privacyCenter: '개인정보 센터',
-  privacyCenterBody: '데이터가 어디로 가는지 확인하세요. 페이지 내용은 다운로드, 라이선스 또는 업데이트 요청에 포함되지 않습니다.',
+  privacyCenterBody:
+    '데이터가 어디로 가는지 확인하세요. 페이지 내용은 다운로드, 라이선스 또는 업데이트 요청에 포함되지 않습니다.',
   defaultProvider: '기본 Provider',
   offlineLock: '오프라인 잠금',
   history: '기록',
   on: '켜짐',
   offDefault: '꺼짐(기본값)',
   lastTask: '마지막 작업: {summary}',
-  offlineLockBody:
-    '사용하면 확장 프로그램 리소스와 Ollama 루프백 연결만 허용됩니다.',
+  offlineLockBody: '사용하면 확장 프로그램 리소스와 Ollama 루프백 연결만 허용됩니다.',
   enableOfflineLock: '오프라인 잠금 사용',
   allowedDestinations: '허용된 네트워크 대상',
   clearLocalData: '로컬 데이터 삭제',
@@ -941,7 +1031,8 @@ const ko: LocaleMessages = {
   clearAll: '모든 로컬 데이터 삭제',
   cleared: '삭제됨: {scope}',
   currentSiteAccess: '현재 사이트 접근 권한',
-  siteAccessBody: '툴바 아이콘을 클릭하면 일회성 접근이 허용됩니다. 지속 접근은 선택 사항이며 아래의 정확한 사이트로 제한됩니다.',
+  siteAccessBody:
+    '툴바 아이콘을 클릭하면 일회성 접근이 허용됩니다. 지속 접근은 선택 사항이며 아래의 정확한 사이트로 제한됩니다.',
   persistentAccess: '지속 접근',
   allowed: '허용됨',
   notAllowed: '허용되지 않음',
@@ -964,9 +1055,12 @@ const ko: LocaleMessages = {
   ollamaModelNotInstalled: '선택한 모델 “{model}”이(가) 설치되어 있지 않습니다.',
   ollamaHttpError: 'Ollama가 HTTP {status}을(를) 반환했습니다.',
   corsSetup: 'CORS 설정 ({platform})',
-  corsMacSteps: 'Ollama를 종료하고 터미널에서 아래 명령을 실행한 뒤 Ollama를 다시 시작하세요.',
-  corsWindowsSteps: 'Ollama를 종료하고 아래 사용자 환경 변수를 설정한 뒤 Ollama를 다시 시작하세요.',
-  corsLinuxSteps: 'Ollama를 종료하고 서비스를 시작하기 전에 아래 환경 변수를 설정한 뒤 Ollama를 다시 시작하세요.',
+  corsMacSteps:
+    'Ollama를 종료하고 터미널에서 아래 명령을 실행한 뒤 Ollama를 다시 시작하세요.',
+  corsWindowsSteps:
+    'Ollama를 종료하고 아래 사용자 환경 변수를 설정한 뒤 Ollama를 다시 시작하세요.',
+  corsLinuxSteps:
+    'Ollama를 종료하고 서비스를 시작하기 전에 아래 환경 변수를 설정한 뒤 Ollama를 다시 시작하세요.',
   extensionId: '확장 프로그램 ID',
   selectedModel: '선택한 모델: {model}',
   installedModels: '설치됨: {models}',
@@ -1011,8 +1105,7 @@ export function t(
   locale = resolveLocale(),
 ): string {
   return Object.entries(values).reduce(
-    (message, [name, value]) =>
-      message.replaceAll(`{${name}}`, String(value)),
+    (message, [name, value]) => message.replaceAll(`{${name}}`, String(value)),
     messages[locale][key],
   );
 }
