@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { isAppError, createAppError } from '@/shared/errors';
 import { OllamaProvider } from '@/providers/ollama';
 import {
@@ -13,6 +13,7 @@ import type {
 } from '@/shared/types';
 import { ErrorBox } from './ErrorBox';
 import { getOllamaModels, OllamaStatusCard } from './OllamaStatusCard';
+import { OllamaSetupLink } from './OllamaSetupGuide';
 import { SiteAccessCard } from './SiteAccessCard';
 import { t } from '@/i18n';
 
@@ -25,16 +26,19 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
   const [ollamaStatus, setOllamaStatus] = useState<ProviderStatus | null>(null);
   const [checkingOllama, setCheckingOllama] = useState(false);
   const [connectionError, setConnectionError] = useState<AppError | null>(null);
+  const connectionCheckId = useRef(0);
 
-  const checkOllama = async (
-    model = preferences.ollamaModel,
-  ) => {
+  const checkOllama = async (model = preferences.ollamaModel) => {
+    const checkId = ++connectionCheckId.current;
     setCheckingOllama(true);
     setConnectionError(null);
     try {
       const provider = new OllamaProvider({ model });
-      setOllamaStatus(await provider.healthCheck());
+      const status = await provider.healthCheck();
+      if (checkId !== connectionCheckId.current) return;
+      setOllamaStatus(status);
     } catch (err) {
+      if (checkId !== connectionCheckId.current) return;
       setOllamaStatus(null);
       setConnectionError(
         isAppError(err)
@@ -44,7 +48,9 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
             }),
       );
     } finally {
-      setCheckingOllama(false);
+      if (checkId === connectionCheckId.current) {
+        setCheckingOllama(false);
+      }
     }
   };
 
@@ -57,6 +63,8 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
   }, []);
 
   const updateProvider = async (providerId: ProviderId) => {
+    connectionCheckId.current += 1;
+    setCheckingOllama(false);
     await onUpdate({ defaultProviderId: providerId });
     if (providerId === 'ollama') {
       await checkOllama();
@@ -139,9 +147,8 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
             <div>
               {t('ollamaEndpoint')}: <code>http://127.0.0.1:11434</code>
             </div>
-            <p className="muted">
-              {t('customEndpointDeferred')}
-            </p>
+            <OllamaSetupLink />
+            <p className="muted">{t('customEndpointDeferred')}</p>
             <div className="row">
               <button
                 type="button"
@@ -151,9 +158,7 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
               >
                 {checkingOllama ? t('testing') : t('testOllama')}
               </button>
-              <span className="muted">
-                {t('healthCheckNoContent')}
-              </span>
+              <span className="muted">{t('healthCheckNoContent')}</span>
             </div>
             {connectionError && <ErrorBox error={connectionError} />}
             <OllamaStatusCard status={ollamaStatus} checking={checkingOllama} />
@@ -175,9 +180,7 @@ export function SettingsPanel({ preferences, onUpdate }: Props) {
           />
           {t('enableHistory')}
         </label>
-        <p className="muted">
-          {t('noSilentFallback')}
-        </p>
+        <p className="muted">{t('noSilentFallback')}</p>
       </div>
     </div>
   );

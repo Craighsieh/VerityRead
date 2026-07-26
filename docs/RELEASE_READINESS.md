@@ -15,7 +15,7 @@ completed.
 - `pnpm pipeline`
   - Type-aware ESLint: pass
   - TypeScript: pass
-  - Vitest: 55 tests pass
+  - Vitest: 62 tests pass
   - Production MV3 build: pass
   - Dist remote-code/endpoint scan: pass
 - `pnpm test:e2e`
@@ -27,14 +27,16 @@ completed.
   - Prominent privacy consent blocks onboarding progression until checked
   - Legacy cache/custom-endpoint preferences migrate to safer defaults
   - A page cannot be read or leaked without a user grant
-- Five locales each define all 185 runtime UI strings explicitly
+- Five locales each define all 194 runtime UI strings explicitly
 - Five manifest locales are present in the production bundle
 - Anthropic-assisted Japanese/Korean language QA completed with Claude Sonnet 5
   - 0 blocker or major issues remain
   - Non-blocking stylistic suggestions are recorded in
     `docs/qa/anthropic-ja-ko.json`
-  - Only public UI, listing, and privacy copy was reviewed; no page content or
-    user data was submitted
+  - Only public UI, listing, privacy, and setup copy was reviewed; no page
+    content or user data was submitted
+- Public Ollama setup guides cover English, Traditional Chinese, Simplified
+  Chinese, Japanese, and Korean
 - Ten real UI store screenshots are 1280×800
 - Store icon and promo tiles match Chrome Web Store dimensions
 - Privacy policy, dashboard answers, permission justifications, and localized
@@ -43,18 +45,18 @@ completed.
 ## External gates still required
 
 - [ ] In Chrome Stable, click the real toolbar action and confirm dynamic
-  `activeTab` extraction, summarize, ask, source jump, selection translation,
-  and Stop using a normal article.
+      `activeTab` extraction, summarize, ask, source jump, selection translation,
+      and Stop using a normal article.
 - [ ] Repeat the core task smoke with both an available Chrome Built-in AI model
-  and Ollama where the device supports them.
+      and Ollama where the device supports them.
 - [ ] Verify a protected page shows a clear error and exact-site permission can
-  be granted and revoked from Settings.
+      be granted and revoked from Settings.
 - [ ] Push the branch and enable GitHub Pages from `/docs`; verify homepage,
-  support, and privacy URLs publicly.
+      support, and privacy URLs publicly.
 - [ ] Verify publisher identity and `craighsieh@gmail.com` in the Chrome Web
-  Store Developer Dashboard.
+      Store Developer Dashboard.
 - [ ] Copy the prepared privacy disclosures/listing copy, upload the matching
-  locale assets, and review the dashboard's automated warnings.
+      locale assets, and review the dashboard's automated warnings.
 - [ ] Submit for Chrome Web Store review.
 
 ## Release artifacts
@@ -62,7 +64,7 @@ completed.
 - Production extension directory: `dist/`
 - Upload ZIP: `release/verityread-0.1.0.zip`
 - Upload ZIP SHA-256:
-  `7c066255372deb1cc75efb64a015733e3e0dfe219836bfae3e70178bb93d02e9`
+  `3284ef39dfee0d1b9fb63e2e41fd97045bb4d91ee11e3730a4f099af37b09969`
 - Store assets: `assets/store/`
 - Store listing source: `docs/store/LISTING.md`
 - Privacy-practices source: `docs/store/PRIVACY_PRACTICES.md`

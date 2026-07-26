@@ -13,6 +13,19 @@ export interface OllamaModelRecommendation {
   deviceMemoryGb?: number;
 }
 
+export const OLLAMA_STARTER_MODELS = [
+  {
+    name: 'gemma4:e4b',
+    approximateDownloadGb: 9.6,
+    profile: 'quality',
+  },
+  {
+    name: 'gemma4:e2b',
+    approximateDownloadGb: 7.2,
+    profile: 'lighter',
+  },
+] as const;
+
 const EMBEDDING_MARKERS = ['embed', 'nomic', 'minilm', 'bge-', 'e5-'];
 
 export function getDeviceMemoryGb(): number | undefined {
@@ -127,6 +140,21 @@ export function recommendOllamaModel(
       deviceMemoryGb ? ` for a ${deviceMemoryGb} GB device` : ''
     }.`,
   };
+}
+
+/**
+ * A successful check only proves readiness for the model returned by that
+ * check. Keeping this comparison explicit prevents a stale result from
+ * enabling setup after the user has selected a different model.
+ */
+export function isOllamaModelReady(
+  status: ProviderStatus | null,
+  selectedModel: string,
+): boolean {
+  const effectiveModel = selectedModel.trim() || status?.model?.trim() || '';
+  return Boolean(
+    status?.healthy && effectiveModel && status.model?.trim() === effectiveModel,
+  );
 }
 
 export function modelChoiceLabel(

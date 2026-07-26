@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { probeChromeAvailability } from '@/providers/chromeBuiltin';
 import { OllamaProvider } from '@/providers/ollama';
 import {
   getOllamaModelDescriptors,
+  isOllamaModelReady,
   recommendOllamaModel,
 } from '@/providers/modelRecommendation';
 import type {
@@ -15,6 +16,7 @@ import { CURRENT_PRIVACY_CONSENT_VERSION } from '@/shared/types';
 import { ErrorBox } from './ErrorBox';
 import { createAppError } from '@/shared/errors';
 import { getOllamaModels, OllamaStatusCard } from './OllamaStatusCard';
+import { OllamaSetupLink } from './OllamaSetupGuide';
 import { t, type MessageKey } from '@/i18n';
 
 interface Props {
@@ -49,30 +51,37 @@ export function Onboarding({ preferences, onComplete }: Props) {
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState<ReturnType<typeof createAppError> | null>(null);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const capabilityCheckId = useRef(0);
 
-  const runCapabilityCheck = async () => {
+  const runCapabilityCheck = async (model = ollamaModel) => {
+    const checkId = ++capabilityCheckId.current;
     setChecking(true);
     setError(null);
     const started = performance.now();
     try {
       const chrome = await probeChromeAvailability();
+      if (checkId !== capabilityCheckId.current) return;
       setChromeAvail(chrome);
       const ollama = new OllamaProvider({
         baseUrl: preferences.ollamaBaseUrl,
-        model: ollamaModel,
+        model,
       });
       const status = await ollama.healthCheck();
+      if (checkId !== capabilityCheckId.current) return;
       setOllamaStatus(status);
       // Prefer keeping preliminary results under 2s perception; already async
       void started;
     } catch (err) {
+      if (checkId !== capabilityCheckId.current) return;
       setError(
         createAppError('UNKNOWN', {
           cause: err instanceof Error ? err.message : String(err),
         }),
       );
     } finally {
-      setChecking(false);
+      if (checkId === capabilityCheckId.current) {
+        setChecking(false);
+      }
     }
   };
 
@@ -88,7 +97,7 @@ export function Onboarding({ preferences, onComplete }: Props) {
     const providerReady =
       providerId === 'chrome-builtin'
         ? chromeAvail?.languageModel === 'available'
-        : Boolean(ollamaStatus?.healthy && selectedOllamaModel);
+        : isOllamaModelReady(ollamaStatus, selectedOllamaModel);
     if (!providerReady) {
       setError(
         createAppError('MODEL_UNAVAILABLE', {
@@ -112,7 +121,7 @@ export function Onboarding({ preferences, onComplete }: Props) {
   const providerReady =
     providerId === 'chrome-builtin'
       ? chromeAvail?.languageModel === 'available'
-      : Boolean(ollamaStatus?.healthy && selectedOllamaModel);
+      : isOllamaModelReady(ollamaStatus, selectedOllamaModel);
 
   return (
     <div className="stack">
@@ -222,6 +231,11 @@ export function Onboarding({ preferences, onComplete }: Props) {
             />
             Ollama (127.0.0.1:11434)
           </label>
+          <div className="setup-callout stack">
+            <strong>{t('ollamaOptionalTitle')}</strong>
+            <span className="muted">{t('ollamaOptionalBody')}</span>
+            <OllamaSetupLink />
+          </div>
 
           {providerId === 'ollama' && (
             <div className="stack">
@@ -274,7 +288,7 @@ export function Onboarding({ preferences, onComplete }: Props) {
               <button
                 type="button"
                 className="btn"
-                onClick={() => void runCapabilityCheck()}
+                onClick={() => void runCapabilityCheck(ollamaModel)}
               >
                 {t('connectionTest')}
               </button>
