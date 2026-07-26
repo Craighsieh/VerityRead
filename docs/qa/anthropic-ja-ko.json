@@ -1,83 +1,59 @@
 {
-  "generatedAt": "2026-07-26T11:50:38.049Z",
+  "generatedAt": "2026-07-26T12:08:52.302Z",
   "requestedModel": "claude-sonnet-5",
   "disclosure": "AI-assisted language QA only; no page content or user data was submitted.",
   "reviews": [
     {
-      "responseId": "msg_011CdQcqScYwf99sZvsgVf1h",
+      "responseId": "msg_011CdQeEU9ah5zWHmU8qr9T7",
       "model": "claude-sonnet-5",
       "result": {
         "locale": "ja",
         "verdict": "needs_changes",
-        "summary": "全体的に自然で高品質な日本語ローカライズですが、setupGuide内のモデル説明表現に軽微な改善余地があり、また一部の文言でトーンや語順の微調整が可能です。致命的または意味を歪める重大な問題は見つかりませんでした。",
+        "summary": "全体的な日本語品質は高く、用語も一貫していますが、setupGuideのモデル表「用途」列の説明がruntimeの実際のラベル文言（品質優先＝推奨、軽量モデル）とニュアンスが微妙に異なる点、および一部の文言で軽微な改善余地があります。ブロッカー・重大な問題は見つかりませんでした。",
         "issues": [
+          {
+            "source": "setupGuide",
+            "key": "",
+            "severity": "minor",
+            "current": "| `gemma4:e2b` | ダウンロード容量を抑えたい端末向け |                 7.2 GB |",
+            "suggested": "| `gemma4:e2b` | ダウンロード容量が小さいモデル |                 7.2 GB |",
+            "reason": "runtimeのlighterModelLabel「ダウンロード容量が小さいモデル」と表現を揃えると、UIとドキュメント間の用語一貫性が向上します。現状でも意味は正確に伝わるため軽微な指摘です。"
+          },
           {
             "source": "runtime",
             "key": "modelRecommendationReason",
             "severity": "minor",
             "current": "モデルサイズと端末の利用可能メモリに基づいた、ローカル読書に適したバランスの良い選択です。",
-            "suggested": "モデルサイズと端末の利用可能メモリに基づき、ローカル読書に適したバランスの良い選択です。",
-            "reason": "「基づいた」を連体修飾で使うとやや硬い印象になるため、「基づき」とする方が自然な日本語の流れになります（好み・スタイルの範囲）。"
+            "suggested": "モデルサイズと端末の利用可能メモリに基づく、ローカル読書に適したバランスの良い選択です。",
+            "reason": "「基づいた」より「基づく」の方が名詞修飾として自然で簡潔です。意味に変更はありません。"
           },
           {
             "source": "runtime",
             "key": "pairingNote",
             "severity": "minor",
             "current": "ローカルモデルが生成する文構造が原文と異なるため、原文と翻訳を2つのブロックに分けて表示しています。",
-            "suggested": "ローカルモデルが生成する訳文の文構造が原文と異なる場合があるため、原文と訳文を2つのブロックに分けて表示しています。",
-            "reason": "「文構造が原文と異なる」の主語が翻訳結果であることを明確にし、「翻訳」を「訳文」とすることで意味がより明確になります（軽微な明確化）。"
+            "suggested": "ローカルモデルが生成する文の構造が原文と異なるため、原文と翻訳を2つのブロックに分けて表示しています。",
+            "reason": "「文構造」より「文の構造」の方が読みやすく自然です。任意の微修正です。"
           },
           {
-            "source": "runtime",
-            "key": "ollamaNoModels",
-            "severity": "minor",
-            "current": "Ollamaは実行中ですが、モデルがインストールされていません。ターミナルで`ollama pull <model>`を実行してください。",
-            "suggested": "Ollamaは実行中ですが、モデルがインストールされていません。ターミナル（またはコマンドプロンプト）で`ollama pull <model>`を実行してください。",
-            "reason": "Windowsユーザー向けに「ターミナル」という表現がやや馴染みが薄い可能性があるが、実害はなく軽微な提案。"
-          },
-          {
-            "source": "setupGuide",
+            "source": "storeListing",
             "key": "",
             "severity": "minor",
-            "current": "最初は1つだけ選択してください。モデルは後から追加または削除できます。",
-            "suggested": "最初は1つだけ選んでください。モデルは後から追加・削除できます。",
-            "reason": "「選択してください」と「選んでください」はどちらも自然ですが、直後の文中の「追加または削除」を「追加・削除」とすることで簡潔になります（スタイルの好み、軽微）。"
-          },
-          {
-            "source": "setupGuide",
-            "key": "",
-            "severity": "minor",
-            "current": "上記の容量は、2026-07-26に確認した[Ollama公式Gemma 4ライブラリ]の情報に基づき、今後変更される場合があります。",
-            "suggested": "上記の容量は2026年7月26日に確認した[Ollama公式Gemma 4ライブラリ]の情報に基づいており、今後変更される場合があります。",
-            "reason": "日付表記を日本語の慣例的な形式（2026年7月26日）にすることで自然さが増します（軽微なスタイル改善）。"
-          },
-          {
-            "source": "privacyPolicy",
-            "key": "",
-            "severity": "minor",
-            "current": "施行日：2026年7月26日",
-            "suggested": "（変更なし、参考として提示）",
-            "reason": "日付表記は既に自然な日本語形式であり、問題ありません。setupGuide側の日付表記（2026-07-26）との統一を図ると、より一貫性のある文書間表現になります。"
-          },
-          {
-            "source": "runtime",
-            "key": "corsMacSteps",
-            "severity": "minor",
-            "current": "Ollamaを終了し、ターミナルで以下のコマンドを実行してから、Ollamaを再起動してください。",
-            "suggested": "（変更なし）",
-            "reason": "問題なし。他言語との整合性チェックのために記載していますが修正不要です。"
+            "current": "Chrome Built-in AI、またはご自身の端末の`127.0.0.1:11434`で動作するOllamaモデルのいずれかを選択できます。",
+            "suggested": "Chrome Built-in AI、またはご自身の端末上の`127.0.0.1:11434`で動作するOllamaモデルのいずれかを選択できます。",
+            "reason": "「端末の」より「端末上の」の方が技術的なアドレス指定の文脈で自然です。意味は変わりません。"
           }
         ]
       },
       "usage": {
-        "input_tokens": 9382,
+        "input_tokens": 9992,
         "cache_creation_input_tokens": 0,
         "cache_read_input_tokens": 0,
         "cache_creation": {
           "ephemeral_5m_input_tokens": 0,
           "ephemeral_1h_input_tokens": 0
         },
-        "output_tokens": 1325,
+        "output_tokens": 882,
         "output_tokens_details": {
           "thinking_tokens": 0
         },
@@ -86,72 +62,80 @@
       }
     },
     {
-      "responseId": "msg_011CdQcrdFniGTD7hdaKodf8",
+      "responseId": "msg_011CdQeFMXzQW5fS6VuQqGht",
       "model": "claude-sonnet-5",
       "result": {
         "locale": "ko",
         "verdict": "needs_changes",
-        "summary": "전반적으로 번역 품질이 높고 자연스럽습니다. 다만 setupGuide의 모델명이 setupFacts와 다르고(gemma4 표기 오류 여부는 소스 확인 필요), 일부 표현에서 minor 수준의 다듬을 부분이 있습니다. 블로커나 심각한 정책 오역은 발견되지 않았습니다.",
+        "summary": "전반적으로 번역 품질이 높고 자연스러우나, 모델 크기 표기 관련 매뭇 대소문자 통일 문제와 일부 조사/구두점 관련 사소한 개선점이 발견되었습니다. 개인정보 정책, 설정 가이드 등 핵심 신뢰 관련 내용은 정확하게 번역되어 있습니다.",
         "issues": [
           {
-            "source": "setupGuide",
-            "key": "",
+            "source": "runtime",
+            "key": "qualityModelLabel",
             "severity": "minor",
-            "current": "| `gemma4:e4b` | 품질 우선. 기본 권장 모델       |                  9.6GB |\n| `gemma4:e2b` | 다운로드 용량을 줄이려는 기기용 |                  7.2GB |",
-            "suggested": "표 형식과 크기 표기(9.6GB, 7.2GB)는 setupFacts와 일치하므로 유지하되, 소수점 및 단위 표기가 다른 로케일 파일들과 일관되게 'GB' 앞에 공백 없이 통일되어 있는지 재확인 권장",
-            "reason": "수치 자체는 setupFacts와 일치하나, 표기 스타일(공백 유무 등) 일관성 점검이 필요합니다."
+            "current": "품질 우선(권장, 약 {size}GB)",
+            "suggested": "품질 우선 (권장, 약 {size}GB)",
+            "reason": "괄호 앞에 공백을 넣는 것이 한국어 타이포그래피 관행에 더 자연스럽습니다. (일관성 문제이므로 minor)"
+          },
+          {
+            "source": "runtime",
+            "key": "lighterModelLabel",
+            "severity": "minor",
+            "current": "더 작은 다운로드(약 {size}GB)",
+            "suggested": "더 작은 다운로드 (약 {size}GB)",
+            "reason": "괄호 앞 공백 일관성을 위한 사소한 스타일 제안"
+          },
+          {
+            "source": "runtime",
+            "key": "pairingNote",
+            "severity": "minor",
+            "current": "로컬 모델이 원문과 다른 문장 구조를 사용했기 때문에 원문과 번역을 두 블록으로 나누어 표시했습니다.",
+            "suggested": "로컬 모델이 원문과 다른 문장 구조를 사용해 원문과 번역을 두 블록으로 나누어 표시했습니다.",
+            "reason": "약간 어색한 인과 연결 표현으로, '~했기 때문에'보다 자연스러운 흐름을 위한 문체 제안"
           },
           {
             "source": "runtime",
             "key": "pageChanged",
             "severity": "minor",
             "current": "페이지가 “{title}”(으)로 변경되었습니다. 새 요청은 이 페이지를 기준으로 처리되며, 이전 출처 버튼은 정확한 위치로 이동하지 못할 수 있습니다.",
-            "suggested": "페이지가 “{title}”(으)로 변경되었습니다. 새 요청은 이 페이지를 기준으로 처리되며, 이전 출처 링크는 정확한 위치로 이동하지 못할 수 있습니다.",
-            "reason": "'출처 버튼'보다 '출처 링크' 또는 '출처 이동 버튼'이 문맥상 더 자연스러울 수 있으나 큰 문제는 아님(용어 통일 제안)."
+            "suggested": "페이지가 “{title}”(으)로 변경되었습니다. 새 요청은 이 페이지를 기준으로 처리되며, 이전 출처 버튼은 정확한 위치로 이동하지 못할 수 있습니다.",
+            "reason": "현재 표현이 정확하고 자연스러워 변경이 필요하지 않습니다. (참고용으로 남김, 실제로는 이슈 아님)"
+          },
+          {
+            "source": "setupGuide",
+            "key": "",
+            "severity": "minor",
+            "current": "| `gemma4:e4b` | 품질 우선. 기본 권장 모델       |                  9.6GB |",
+            "suggested": "| `gemma4:e4b` | 품질 우선. 기본 권장 모델       |                 약 9.6GB |",
+            "reason": "표 안의 다운로드 크기 표기에 '약'을 붙이면 runtime 문자열(qualityModelLabel 등)의 '약 {size}GB' 표현과 일관성이 유지됩니다."
+          },
+          {
+            "source": "setupGuide",
+            "key": "",
+            "severity": "minor",
+            "current": "| `gemma4:e2b` | 다운로드 용량을 줄이려는 기기용 |                  7.2GB |",
+            "suggested": "| `gemma4:e2b` | 다운로드 용량을 줄이려는 기기용 |                 약 7.2GB |",
+            "reason": "위와 동일한 일관성 문제로, 런타임 텍스트와 통일감을 주기 위한 제안"
           },
           {
             "source": "runtime",
             "key": "localScopeNotice",
             "severity": "minor",
             "current": "선택한 로컬 Provider에는 “{scope}”만 전달됩니다.",
-            "suggested": "선택한 로컬 Provider로는 “{scope}”만 전달됩니다.",
-            "reason": "조사 '에는'보다 '로는'이 '전달되다'라는 동사와 더 자연스럽게 호응합니다."
-          },
-          {
-            "source": "runtime",
-            "key": "privacyConsent",
-            "severity": "minor",
-            "current": "요청한 기능을 제공하기 위해 VerityRead가 이 기기에서 제가 선택한 페이지 내용을 처리하는 데 동의합니다.",
-            "suggested": "요청한 기능을 제공하기 위해 VerityRead가 이 기기에서 제가 선택한 페이지 내용을 처리하는 것에 동의합니다.",
-            "reason": "문어체에서 '~하는 데 동의합니다'도 통용되나 '~하는 것에 동의합니다'가 더 명확한 동의 표현으로 자연스럽습니다. (선택 사항, 현행 표현도 무방)"
-          },
-          {
-            "source": "runtime",
-            "key": "modelRecommendationReason",
-            "severity": "minor",
-            "current": "모델 크기와 기기의 사용 가능한 메모리를 고려한 균형 잡힌 로컬 읽기 선택입니다.",
-            "suggested": "모델 크기와 기기에서 사용 가능한 메모리를 고려한 균형 잡힌 로컬 읽기용 선택입니다.",
-            "reason": "조사 및 어순을 약간 다듬으면 가독성이 향상됩니다."
-          },
-          {
-            "source": "storeListing",
-            "key": "",
-            "severity": "minor",
-            "current": "VerityRead는 Chrome용 로컬 AI 읽기 도우미입니다.",
-            "suggested": "VerityRead는 Chrome 확장 프로그램으로 제공되는 로컬 AI 읽기 도우미입니다.",
-            "reason": "현재 표현도 자연스럽지만, 'Chrome용'이 다소 광고성 표현으로 읽힐 수 있어 제품 설명 맥락에 맞게 다듬을 수 있습니다(필수 아님)."
+            "suggested": "선택한 로컬 Provider에는 “{scope}”만 전달됩니다.",
+            "reason": "현재 표현이 명확하고 정확하여 변경이 필요하지 않습니다."
           }
         ]
       },
       "usage": {
-        "input_tokens": 10778,
+        "input_tokens": 11444,
         "cache_creation_input_tokens": 0,
         "cache_read_input_tokens": 0,
         "cache_creation": {
           "ephemeral_5m_input_tokens": 0,
           "ephemeral_1h_input_tokens": 0
         },
-        "output_tokens": 1470,
+        "output_tokens": 1354,
         "output_tokens_details": {
           "thinking_tokens": 0
         },
