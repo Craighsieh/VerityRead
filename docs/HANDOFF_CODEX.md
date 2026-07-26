@@ -1,5 +1,9 @@
 # VerityRead → Codex 交接清单
 
+> **歷史文件：** 本文件保留早期專案交接背景，但其中的 Git、測試與發布
+> 狀態已過時。後續開發請以 [HANDOFF_CURSOR.md](HANDOFF_CURSOR.md)、
+> [RELEASE_READINESS.md](RELEASE_READINESS.md) 及目前 `main` 分支為準。
+
 **交接日期：** 2026-07-25  
 **仓库路径：** `/Users/craighsieh/Documents/VaultLens`  
 **正式名称：** VerityRead／真閱（隐私优先、本机 AI Chrome 扩展）
