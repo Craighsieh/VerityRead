@@ -10,6 +10,11 @@ Local AI reading assistant. Accurate summaries. Privacy by design.
 真閱是以本地 AI 為優先的 Chrome 閱讀助理，協助你摘要目前頁面、依原文提問，
 以及翻譯選取文字。
 
+## 發布狀態
+
+VerityRead 0.1.0 已於 2026-07-26 提交 Chrome Web Store 審查，目前尚未公開
+上架。審查通過後會自動發布；正式商店連結將在可用後補上。
+
 ## 開始前：選擇一條本地 AI 路徑
 
 Ollama **不是所有使用者都必須安裝的前置程式**：

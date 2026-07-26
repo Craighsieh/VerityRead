@@ -10,13 +10,16 @@
 
 ## Manual checklist
 
-- [ ] Load unpacked `dist/` in `chrome://extensions`
-- [ ] Complete Onboarding capability check without reading a page
-- [ ] Summarize `tests/fixtures/article.html` (served locally or opened as file with caveats)
-- [ ] Click a source citation → page scrolls/highlights
-- [ ] Labs → Spike Ollama shows healthy or actionable CORS guide
-- [ ] Privacy Center shows Offline Lock and allowed destinations
+- [x] Load unpacked `dist/` in `chrome://extensions`
+- [x] Complete Onboarding capability check without reading a page
+- [x] Summarize `tests/fixtures/article.html` (served locally or opened as file with caveats)
+- [x] Click a source citation → page scrolls/highlights
+- [x] Labs → Spike Ollama shows healthy or actionable CORS guide
+- [x] Privacy Center shows Offline Lock and allowed destinations
 
 ## Notes
 
 If Chrome Built-in AI is unavailable on the test machine, document the availability JSON from Labs and complete the Ollama path for gate item 2.
+
+Manual Chrome Stable acceptance and the Ollama loopback/CORS path were completed
+before the 0.1.0 Chrome Web Store submission on 2026-07-26.

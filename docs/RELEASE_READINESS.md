@@ -4,11 +4,12 @@ Last reviewed: 2026-07-26
 
 ## Current decision
 
-**Code and store-package automation: PASS. External publication: HOLD.**
+**Code and store-package automation: PASS. Chrome Web Store review: PENDING.**
 
-This is the 0.1.0 release candidate. It must not yet be described as published
-or fully approved by the Chrome Web Store until the external gates below are
-completed.
+Version 0.1.0 was submitted to the Chrome Web Store on 2026-07-26. The
+Developer Dashboard reports `待審查` (pending review). It must not yet be
+described as published or approved; automatic publication is enabled for after
+approval.
 
 ## Automated evidence
 
@@ -43,22 +44,47 @@ completed.
 - Privacy policy, dashboard answers, permission justifications, and localized
   listing copy are prepared under `docs/`
 
-## External gates still required
+## Completed external gates
 
-- [ ] In Chrome Stable, click the real toolbar action and confirm dynamic
+- [x] In Chrome Stable, click the real toolbar action and confirm dynamic
       `activeTab` extraction, summarize, ask, source jump, selection translation,
       and Stop using a normal article.
-- [ ] Repeat the core task smoke with both an available Chrome Built-in AI model
+- [x] Repeat the core task smoke with both an available Chrome Built-in AI model
       and Ollama where the device supports them.
-- [ ] Verify a protected page shows a clear error and exact-site permission can
+- [x] Verify a protected page shows a clear error and exact-site permission can
       be granted and revoked from Settings.
 - [x] Push the branch and enable GitHub Pages from `/docs`; verify homepage,
       support, and privacy URLs publicly.
-- [ ] Verify publisher identity and `craighsieh@gmail.com` in the Chrome Web
+- [x] Verify publisher identity and `craighsieh@gmail.com` in the Chrome Web
       Store Developer Dashboard.
-- [ ] Copy the prepared privacy disclosures/listing copy, upload the matching
+- [x] Copy the prepared privacy disclosures/listing copy, upload the matching
       locale assets, and review the dashboard's automated warnings.
-- [ ] Submit for Chrome Web Store review.
+- [x] Submit for Chrome Web Store review.
+
+## Chrome Web Store submission
+
+- Item ID: `ocpdemeggjodckegncmndokciofklfde`
+- Submitted version: `0.1.0`
+- Submitted: 2026-07-26
+- Current dashboard status: `待審查` (pending review)
+- Distribution: free, public, all regions
+- Publication: automatic after approval
+- Category: Productivity → Tools
+- Localized listings and screenshots: English, Traditional Chinese, Simplified
+  Chinese, Japanese, and Korean
+- Disclosed data categories available in the current dashboard: Website content
+  and Web history. The dashboard did not offer a separate User-generated content
+  category; prompts and locally generated answers remain covered by the public
+  privacy policy and reviewer instructions.
+
+## Remaining release gates
+
+- [ ] Receive Chrome Web Store approval.
+- [ ] Verify the public store listing and install the approved build from the
+      Chrome Web Store on Chrome Stable.
+- [ ] Re-run the core smoke test against the store-installed build.
+- [ ] Record and address any reviewer feedback without changing the pending
+      submission unless a new package is required.
 
 ## Release artifacts
 

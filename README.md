@@ -33,7 +33,8 @@ pnpm build
 ## Docs
 
 - [Public site and privacy policy](https://craighsieh.github.io/VerityRead/)
-- [HANDOFF_CODEX.md](docs/HANDOFF_CODEX.md) — **给 Codex / 下一任开发者的交接清单**
+- [HANDOFF_CURSOR.md](docs/HANDOFF_CURSOR.md) — **給 Cursor／下一任開發者的目前交接清單**
+- [HANDOFF_CODEX.md](docs/HANDOFF_CODEX.md) — 歷史交接文件
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [THREAT_MODEL.md](docs/THREAT_MODEL.md)
 - [PRIVACY_TEST_PLAN.md](docs/PRIVACY_TEST_PLAN.md)
