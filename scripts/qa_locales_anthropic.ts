@@ -1,8 +1,8 @@
 /**
  * Development-only Japanese/Korean language QA through Anthropic.
  *
- * Sends only public UI/listing/privacy/setup copy. It is not bundled into the
- * extension and never receives user page content.
+ * Sends only public UI/listing/privacy/setup/support copy. It is not bundled
+ * into the extension and never receives user page content.
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -57,7 +57,14 @@ const QA_OUTPUT_SCHEMA = {
         properties: {
           source: {
             type: 'string',
-            enum: ['runtime', 'manifest', 'storeListing', 'privacyPolicy', 'setupGuide'],
+            enum: [
+              'runtime',
+              'manifest',
+              'storeListing',
+              'privacyPolicy',
+              'setupGuide',
+              'supportPage',
+            ],
           },
           key: {
             type: 'string',
@@ -106,11 +113,12 @@ function runtimeCopy(locale: SupportedLocale): Record<string, string> {
 
 async function sourceBundle(locale: 'ja' | 'ko'): Promise<Record<string, unknown>> {
   const privacyFilename = locale === 'ja' ? 'ja.md' : 'ko.md';
-  const [manifest, listing, privacy, setupGuide] = await Promise.all([
+  const [manifest, listing, privacy, setupGuide, supportPage] = await Promise.all([
     readFile(resolve(ROOT, `public/_locales/${locale}/messages.json`), 'utf8'),
     readFile(resolve(ROOT, 'docs/store/LISTING.md'), 'utf8'),
     readFile(resolve(ROOT, `docs/privacy/${privacyFilename}`), 'utf8'),
     readFile(resolve(ROOT, `docs/setup/${privacyFilename}`), 'utf8'),
+    readFile(resolve(ROOT, `docs/support/${privacyFilename}`), 'utf8'),
   ]);
   const listingHeading = locale === 'ja' ? '## 日本語 (`ja`)' : '## 한국어 (`ko`)';
   const listingStart = listing.indexOf(listingHeading);
@@ -132,6 +140,7 @@ async function sourceBundle(locale: 'ja' | 'ko'): Promise<Record<string, unknown
     ),
     privacyPolicy: privacy,
     setupGuide,
+    supportPage,
   };
 }
 
@@ -160,9 +169,10 @@ async function reviewLocale(
       },
       system:
         `You are a senior native ${language} product localization reviewer. ` +
-        'Review Chrome-extension UI, store listing, privacy copy, and setup instructions for grammar, naturalness, clarity, consistent terminology, and product-policy accuracy. ' +
+        'Review Chrome-extension UI, store listing, privacy copy, setup instructions, and support copy for grammar, naturalness, clarity, consistent terminology, and product-policy accuracy. ' +
         'Use blocker only for dangerous or unusable copy. Use major only when copy materially changes meaning, misrepresents privacy or product capabilities, or prevents a user from completing a task. ' +
         'Classify tone, word order, terminology refinement, and non-blocking ambiguity as minor. Do not report strings that need no change. ' +
+        'Never report a verification placeholder or an issue whose reason says the current copy is correct; omit it instead. ' +
         'Do not translate product names, API names, Provider, Chrome Built-in AI, Ollama, URLs, code, or {placeholder} tokens. ' +
         'Treat setupFacts as the source of truth for starter model names and sizes; runtime {size} placeholders are populated from those same values. ' +
         'Treat this as AI-assisted linguistic QA, not legal advice.',

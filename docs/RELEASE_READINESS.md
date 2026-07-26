@@ -51,7 +51,7 @@ completed.
       and Ollama where the device supports them.
 - [ ] Verify a protected page shows a clear error and exact-site permission can
       be granted and revoked from Settings.
-- [ ] Push the branch and enable GitHub Pages from `/docs`; verify homepage,
+- [x] Push the branch and enable GitHub Pages from `/docs`; verify homepage,
       support, and privacy URLs publicly.
 - [ ] Verify publisher identity and `craighsieh@gmail.com` in the Chrome Web
       Store Developer Dashboard.

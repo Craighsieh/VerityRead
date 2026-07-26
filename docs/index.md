@@ -44,6 +44,7 @@ fallback。
 - [隐私政策（简体中文）](privacy/zh-CN)
 - [プライバシーポリシー](privacy/ja)
 - [개인정보 처리방침](privacy/ko)
+- [Support / 使用支援](support/)
 - [Source code](https://github.com/craighsieh/VerityRead)
 
-Support: [craighsieh@gmail.com](mailto:craighsieh@gmail.com)
+Support email: [craighsieh@gmail.com](mailto:craighsieh@gmail.com)
