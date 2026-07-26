@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { taskOrchestrator } from '@/core/orchestrator';
 import { createAppError, isAppError } from '@/shared/errors';
-import { createTaskId, isExtensionMessage } from '@/shared/messages';
+import { createTaskId } from '@/shared/messages';
 import { sendMessage } from '@/shared/messaging';
+import {
+  isFreshContextMenuAction,
+  isPendingContextMenuAction,
+  PENDING_CONTEXT_MENU_ACTION_KEY,
+} from '@/shared/contextMenuAction';
 import type {
   AnswerLength,
   AppError,
@@ -162,6 +167,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const streamingRef = useRef('');
+  const handledContextMenuRequestIds = useRef(new Set<string>());
 
   const latestAssistant = useMemo(
     () =>
@@ -272,9 +278,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
     setProgressPercent(30);
     setPageContext((previous) => {
       if (previous && previous.url !== page.url) {
-        setPageChangeNotice(
-          t('pageChanged', { title: page.title }),
-        );
+        setPageChangeNotice(t('pageChanged', { title: page.title }));
       }
       return {
         title: page.title,
@@ -414,10 +418,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
     await executeCommand({
       kind: 'ask',
       question,
-      requestLabel:
-        action === 'simplify'
-          ? t('simplifyRequest')
-          : t('explainRequest'),
+      requestLabel: action === 'simplify' ? t('simplifyRequest') : t('explainRequest'),
       scope: 'selection',
       readingLevel: action === 'simplify' ? 'simple' : preferences.readingLevel,
       answerLength: 'normal',
@@ -515,13 +516,16 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
   };
 
   useEffect(() => {
-    const handleContextMenuAction = (raw: unknown) => {
-      if (!isExtensionMessage(raw)) return;
-      if (raw.type === 'CONTEXT_MENU_TRANSLATE') {
-        void translateSelection(raw.text);
-        return;
-      }
-      if (raw.type !== 'CONTEXT_MENU_ACTION') return;
+    let active = true;
+    const claimContextMenuAction = (raw: unknown) => {
+      if (!active || !isPendingContextMenuAction(raw)) return;
+      if (handledContextMenuRequestIds.current.has(raw.requestId)) return;
+      handledContextMenuRequestIds.current.add(raw.requestId);
+      void chrome.storage.session
+        .remove(PENDING_CONTEXT_MENU_ACTION_KEY)
+        .catch(() => undefined);
+      if (!isFreshContextMenuAction(raw)) return;
+
       if (raw.action === 'translate') {
         void translateSelection(raw.text);
       } else if (raw.action === 'ask') {
@@ -530,8 +534,24 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
         void runSelectionAction(raw.action, raw.text);
       }
     };
-    chrome.runtime.onMessage.addListener(handleContextMenuAction);
-    return () => chrome.runtime.onMessage.removeListener(handleContextMenuAction);
+
+    const handleStorageChange = (
+      changes: Record<string, chrome.storage.StorageChange>,
+      areaName: string,
+    ) => {
+      if (areaName !== 'session') return;
+      claimContextMenuAction(changes[PENDING_CONTEXT_MENU_ACTION_KEY]?.newValue);
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+    void chrome.storage.session
+      .get(PENDING_CONTEXT_MENU_ACTION_KEY)
+      .then((items) => claimContextMenuAction(items[PENDING_CONTEXT_MENU_ACTION_KEY]))
+      .catch(() => undefined);
+    return () => {
+      active = false;
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
   });
 
   const retryLastCommand = async (shorter = false) => {
@@ -618,9 +638,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
                     </div>
                   ))}
                   {!message.bilingual.aligned && (
-                    <p className="muted pairing-note">
-                      {t('pairingNote')}
-                    </p>
+                    <p className="muted pairing-note">{t('pairingNote')}</p>
                   )}
                 </div>
               ) : (
@@ -681,9 +699,7 @@ export function ChatPanel({ preferences, onUpdatePreferences, onReceipt }: Props
                 <span>{elapsedSeconds}s</span>
               </div>
               {elapsedSeconds >= 8 && !streaming && (
-                <p className="slow-task-note">
-                  {t('slowTask')}
-                </p>
+                <p className="slow-task-note">{t('slowTask')}</p>
               )}
               {streaming && <div className="message-text">{streaming}</div>}
             </div>

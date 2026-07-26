@@ -7,6 +7,11 @@ import { providerRegistry } from '@/providers/registry';
 import { probeChromeAvailability } from '@/providers/chromeBuiltin';
 import contentScriptFile from '@/content/index.ts?script';
 import { productName, t } from '@/i18n';
+import {
+  PENDING_CONTEXT_MENU_ACTION_KEY,
+  type PendingContextMenuAction,
+} from '@/shared/contextMenuAction';
+import { waitForContentScriptReady } from './contentScriptReady';
 
 const CONTEXT_MENU_ACTIONS = {
   translate: 'verityread-translate-selection',
@@ -48,18 +53,21 @@ async function ensureContentScript(tabId: number): Promise<void> {
     });
   }
 
-  const ready = await sendTabMessage(tabId, { type: 'PING', from: 'background' });
-  if (ready?.type !== 'PONG') {
+  const ready = await waitForContentScriptReady(async () => {
+    const response = await sendTabMessage(tabId, {
+      type: 'PING',
+      from: 'background',
+    });
+    return response?.type === 'PONG';
+  });
+  if (!ready) {
     throw createAppError('PAGE_INACCESSIBLE', {
       cause: 'The page reader did not start after permission was granted.',
     });
   }
 }
 
-async function siteAccessResult(
-  requestId: string,
-  action?: 'request' | 'remove',
-) {
+async function siteAccessResult(requestId: string, action?: 'request' | 'remove') {
   const tab = await getActiveTab();
   const originPattern = originPatternFromUrl(tab?.url);
   if (!originPattern) {
@@ -137,19 +145,26 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const text = info.selectionText?.trim() ?? '';
   if (!text) return;
 
-  try {
-    await chrome.sidePanel.open({ tabId: tab.id });
-  } catch {
-    // Side panel open may fail on restricted pages
-  }
-
-  // Notify side panel (broadcast); side panel listens via runtime.onMessage
-  void chrome.runtime.sendMessage({
-    type: 'CONTEXT_MENU_ACTION',
+  const pendingAction: PendingContextMenuAction = {
     requestId: createRequestId(),
     action,
     text,
-  });
+    createdAt: Date.now(),
+  };
+
+  try {
+    await chrome.sidePanel.open({ tabId: tab.id });
+    // Session storage bridges the brief interval before a newly opened panel
+    // registers its listeners. The panel removes the selection after claiming it.
+    await chrome.storage.session.set({
+      [PENDING_CONTEXT_MENU_ACTION_KEY]: pendingAction,
+    });
+  } catch {
+    // Side panel open may fail on restricted pages; do not retain stale text.
+    await chrome.storage.session
+      .remove(PENDING_CONTEXT_MENU_ACTION_KEY)
+      .catch(() => undefined);
+  }
 });
 
 onMessage(async (message, sender) => {

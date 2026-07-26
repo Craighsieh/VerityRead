@@ -17,10 +17,7 @@ test('loads the production MV3 bundle with least-privilege permissions', async (
     expect.arrayContaining(['activeTab', 'scripting', 'storage', 'sidePanel']),
   );
   expect(manifest.host_permissions).toEqual(['http://127.0.0.1:11434/*']);
-  expect(manifest.optional_host_permissions).toEqual([
-    'http://*/*',
-    'https://*/*',
-  ]);
+  expect(manifest.optional_host_permissions).toEqual(['http://*/*', 'https://*/*']);
   expect(manifest.content_scripts).toBeUndefined();
 });
 
@@ -30,7 +27,9 @@ test('requires explicit privacy consent before capability setup', async ({
 }) => {
   await page.goto(`chrome-extension://${extensionId}/src/sidepanel/index.html`);
 
-  await expect(page.getByRole('heading', { name: 'Welcome to VerityRead' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Welcome to VerityRead' }),
+  ).toBeVisible();
   const consent = page.getByRole('checkbox');
   const capabilityButton = page.getByRole('button', {
     name: 'Run device capability check',
@@ -40,6 +39,53 @@ test('requires explicit privacy consent before capability setup', async ({
   await expect(capabilityButton).toBeDisabled();
   await consent.check();
   await expect(capabilityButton).toBeEnabled();
+});
+
+test('claims a queued context-menu action when the side panel cold-starts', async ({
+  page,
+  extensionId,
+  serviceWorker,
+}) => {
+  await serviceWorker.evaluate(async () => {
+    await chrome.storage.local.clear();
+    await chrome.storage.session.clear();
+    await chrome.storage.local.set({
+      'verityread.storageVersion': 2,
+      'verityread.preferences': {
+        defaultProviderId: 'chrome-builtin',
+        ollamaBaseUrl: 'http://127.0.0.1:11434',
+        ollamaModel: '',
+        targetLanguage: 'zh-Hans',
+        offlineLock: false,
+        historyEnabled: false,
+        historyRetentionDays: 7,
+        onboardingComplete: true,
+        privacyConsentVersion: '2026-07-26',
+        cacheSummaries: false,
+        readingLevel: 'standard',
+      },
+    });
+    await chrome.storage.session.set({
+      pendingContextMenuAction: {
+        requestId: 'context-e2e',
+        action: 'explain',
+        text: 'Selected article text',
+        createdAt: Date.now(),
+      },
+    });
+  });
+
+  await page.goto(`chrome-extension://${extensionId}/src/sidepanel/index.html`);
+
+  await expect(page.getByText('Explain the selected text.')).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(async () => {
+        const stored = await chrome.storage.session.get('pendingContextMenuAction');
+        return stored.pendingContextMenuAction;
+      }),
+    )
+    .toBeUndefined();
 });
 
 test('migrates legacy preferences to opt-in cache and fixed loopback', async ({
@@ -59,7 +105,9 @@ test('migrates legacy preferences to opt-in cache and fixed loopback', async ({
   });
 
   await page.goto(`chrome-extension://${extensionId}/src/sidepanel/index.html`);
-  await expect(page.getByRole('heading', { name: 'Welcome to VerityRead' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Welcome to VerityRead' }),
+  ).toBeVisible();
 
   const preferences = await page.evaluate(async () => {
     const stored = await chrome.storage.local.get('verityread.preferences');
