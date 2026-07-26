@@ -15,11 +15,11 @@ completed.
 - `pnpm pipeline`
   - Type-aware ESLint: pass
   - TypeScript: pass
-  - Vitest: 62 tests pass
+  - Vitest: 66 tests pass
   - Production MV3 build: pass
   - Dist remote-code/endpoint scan: pass
 - `pnpm test:e2e`
-  - 7 Playwright tests pass
+  - 8 Playwright tests pass
   - Production extension bundle loads in Playwright Chromium
   - Manifest contains no static content script
   - Required host access is limited to `127.0.0.1:11434`
@@ -27,6 +27,7 @@ completed.
   - Prominent privacy consent blocks onboarding progression until checked
   - Legacy cache/custom-endpoint preferences migrate to safer defaults
   - A page cannot be read or leaked without a user grant
+  - A queued context-menu action is claimed when the side panel cold-starts
 - Five locales each define all 194 runtime UI strings explicitly
 - Five manifest locales are present in the production bundle
 - Anthropic-assisted Japanese/Korean language QA completed with Claude Sonnet 5
@@ -64,7 +65,7 @@ completed.
 - Production extension directory: `dist/`
 - Upload ZIP: `release/verityread-0.1.0.zip`
 - Upload ZIP SHA-256:
-  `3284ef39dfee0d1b9fb63e2e41fd97045bb4d91ee11e3730a4f099af37b09969`
+  `b9b131adb1d8b92eeb6cb554a6810bcd5d345e5a065f029d7e1616770f77cd78`
 - Store assets: `assets/store/`
 - Store listing source: `docs/store/LISTING.md`
 - Privacy-practices source: `docs/store/PRIVACY_PRACTICES.md`
