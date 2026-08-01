@@ -11,6 +11,16 @@ permalink: /support/zh-CN/
 
 电子邮件：[craighsieh@gmail.com](mailto:craighsieh@gmail.com)
 
+## 支持开发
+
+真阅免费使用，支持不会解锁额外功能。如果真阅对你有帮助，可通过
+[PayPal 自愿支持后续开发](https://paypal.me/craighsieh)。
+
+<a href="https://paypal.me/craighsieh"><img src="../../assets/support/paypal-qr.svg" alt="支持真阅开发的 PayPal 二维码" width="220" height="220"></a>
+
+付款由 PayPal 处理，并适用其条款与费用。这是对独立软件开发的自愿支持，
+不是可抵税的公益捐款。
+
 ## 联系前请先检查
 
 1. 打开真阅 → **设置**，点击**重新检查**。

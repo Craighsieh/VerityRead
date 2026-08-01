@@ -69,6 +69,12 @@ GitHub Pages 已由 `/docs` 發布：
 - Ollama 設定：<https://craighsieh.github.io/VerityRead/setup/>
 - 支援：<https://craighsieh.github.io/VerityRead/support/>
 
+公開頁面與 GitHub repository 的自願支持入口使用
+<https://paypal.me/craighsieh>。此連結由 PayPal 處理付款，不進入擴充功能
+runtime、不解鎖功能，也沒有加入 0.1.0 待審套件。若後續更換收款目的地，需同步
+更新 `.github/FUNDING.yml`、`README.md`、`docs/index.md`、五語支援頁面及共用
+QR Code，並先以登出狀態確認公開收款人資訊。
+
 ---
 
 ## 4. Chrome Web Store 狀態

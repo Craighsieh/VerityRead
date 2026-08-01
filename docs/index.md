@@ -53,3 +53,11 @@ fallback。
 - [Source code](https://github.com/craighsieh/VerityRead)
 
 Support email: [craighsieh@gmail.com](mailto:craighsieh@gmail.com)
+
+## 支持開發
+
+真閱免費使用，支持不會解鎖額外功能。如果真閱對你有幫助，可透過
+[PayPal 自願支持後續開發](https://paypal.me/craighsieh)。付款由 PayPal 處理，
+並適用其條款與費用；這不是可抵稅的公益捐款。
+
+<a href="https://paypal.me/craighsieh"><img src="assets/support/paypal-qr.svg" alt="支持真閱開發的 PayPal QR Code" width="220" height="220"></a>

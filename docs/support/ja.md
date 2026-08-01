@@ -11,6 +11,17 @@ permalink: /support/ja/
 
 メール：[craighsieh@gmail.com](mailto:craighsieh@gmail.com)
 
+## 開発を支援する
+
+VerityReadは無料で利用でき、支援によって追加機能が解放されることはありません。
+VerityReadが役立った場合は、[PayPalから今後の開発を任意で支援](https://paypal.me/craighsieh)
+できます。
+
+<a href="https://paypal.me/craighsieh"><img src="../../assets/support/paypal-qr.svg" alt="VerityReadの開発を支援するPayPal QRコード" width="220" height="220"></a>
+
+決済はPayPalが処理し、PayPalの規約と手数料が適用されます。これは独立した
+ソフトウェア開発への任意の支援であり、税控除の対象となる慈善寄付ではありません。
+
 ## お問い合わせ前の確認
 
 1. VerityRead → **設定**を開き、**再確認**を選択します。

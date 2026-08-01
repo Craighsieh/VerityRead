@@ -11,6 +11,16 @@ permalink: /support/zh-TW/
 
 電子郵件：[craighsieh@gmail.com](mailto:craighsieh@gmail.com)
 
+## 支持開發
+
+真閱免費使用，支持不會解鎖額外功能。如果真閱對你有幫助，可透過
+[PayPal 自願支持後續開發](https://paypal.me/craighsieh)。
+
+<a href="https://paypal.me/craighsieh"><img src="../../assets/support/paypal-qr.svg" alt="支持真閱開發的 PayPal QR Code" width="220" height="220"></a>
+
+付款由 PayPal 處理，並適用其條款與費用。這是對獨立軟體開發的自願支持，
+不是可抵稅的公益捐款。
+
 ## 聯絡前請先檢查
 
 1. 開啟真閱 → **設定**，按下**重新檢查**。

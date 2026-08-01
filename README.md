@@ -51,6 +51,18 @@ pnpm build
 - Offline Lock + clear local data
 - History off by default
 
+## Support development
+
+VerityRead is free to use, and financial support does not unlock additional
+features. If VerityRead helps you, you can voluntarily support its ongoing
+development through [PayPal](https://paypal.me/craighsieh).
+
+<a href="https://paypal.me/craighsieh"><img src="docs/assets/support/paypal-qr.svg" alt="PayPal QR code for supporting VerityRead" width="180" height="180"></a>
+
+Payments are processed by PayPal and subject to PayPal's terms and fees. This
+is voluntary support for independent software development, not a tax-deductible
+charitable donation.
+
 ## License
 
 Source available in this public repository. No license is granted until a license
